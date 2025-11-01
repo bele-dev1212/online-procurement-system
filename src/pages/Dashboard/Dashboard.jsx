@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState({
     overview: {},
     recentActivities: [],
@@ -9,218 +13,115 @@ const Dashboard = () => {
     procurementMetrics: {},
     supplierPerformance: [],
     stockAlerts: [],
-    pendingApprovals: []
+    pendingApprovals: [],
+    teamMembers: []
   });
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('monthly');
- 
+  const [showCSVUpload, setShowCSVUpload] = useState(false);
+  const [csvFile, setCsvFile] = useState(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
-  // Mock data - replace with actual API calls
-  const mockDashboardData = {
-    overview: {
-      totalSpend: 5850000,
-      totalOrders: 245,
-      activeSuppliers: 42,
-      costSavings: 875000,
-      pendingApprovals: 12,
-      stockAlerts: 8,
-      complianceRate: 94.5,
-      spendChange: 12.5,
-      ordersChange: 8.3,
-      savingsChange: 15.7
-    },
-    recentActivities: [
-      {
-        id: 1,
-        type: 'purchase_order',
-        title: 'Purchase Order Approved',
-        description: 'PO #PO-2024-156 has been approved and sent to supplier',
-        timestamp: new Date('2024-01-15T14:30:00Z'),
-        user: 'John Smith',
-        status: 'completed'
-      },
-      {
-        id: 2,
-        type: 'stock_alert',
-        title: 'Low Stock Alert',
-        description: 'Laptop Dell XPS 13 is running low. Current stock: 2 units',
-        timestamp: new Date('2024-01-15T10:15:00Z'),
-        user: 'System',
-        status: 'warning'
-      },
-      {
-        id: 3,
-        type: 'supplier',
-        title: 'New Supplier Registered',
-        description: 'TechCorp Inc. has completed registration process',
-        timestamp: new Date('2024-01-14T16:45:00Z'),
-        user: 'Sarah Johnson',
-        status: 'completed'
-      },
-      {
-        id: 4,
-        type: 'bidding',
-        title: 'Bid Submission Reminder',
-        description: 'RFQ #RFQ-2024-003 closes in 24 hours',
-        timestamp: new Date('2024-01-14T09:20:00Z'),
-        user: 'System',
-        status: 'info'
-      },
-      {
-        id: 5,
-        type: 'approval',
-        title: 'Approval Required',
-        description: 'Requisition #REQ-2024-045 requires your approval',
-        timestamp: new Date('2024-01-13T14:15:00Z'),
-        user: 'Mike Chen',
-        status: 'pending'
-      }
-    ],
-    quickStats: {
-      pendingRequisitions: 8,
-      openRFQs: 12,
-      activeBids: 18,
-      overdueDeliveries: 3,
-      supplierEvaluations: 5,
-      contractRenewals: 7
-    },
-    procurementMetrics: {
-      avgProcessingTime: 2.4,
-      approvalRate: 94.5,
-      complianceRate: 96.2,
-      supplierDiversity: 28.3,
-      costAvoidance: 425000,
-      cycleTime: 3.2
-    },
-    supplierPerformance: [
-      {
-        id: 'SUPP-001',
-        name: 'TechCorp Inc.',
-        rating: 4.8,
-        delivery: 98.2,
-        quality: 95.5,
-        compliance: 96.8,
-        spend: 1250000,
-        trend: 'up'
-      },
-      {
-        id: 'SUPP-002',
-        name: 'OfficeWorld Ltd',
-        rating: 4.6,
-        delivery: 95.4,
-        quality: 92.8,
-        compliance: 94.2,
-        spend: 875000,
-        trend: 'stable'
-      },
-      {
-        id: 'SUPP-006',
-        name: 'NetTech Solutions',
-        rating: 4.7,
-        delivery: 97.8,
-        quality: 96.9,
-        compliance: 98.1,
-        spend: 1345000,
-        trend: 'up'
-      },
-      {
-        id: 'SUPP-004',
-        name: 'SoftSolutions Corp',
-        rating: 4.4,
-        delivery: 92.1,
-        quality: 94.7,
-        compliance: 97.3,
-        spend: 956000,
-        trend: 'stable'
-      }
-    ],
-    stockAlerts: [
-      {
-        id: 1,
-        product: 'Laptop Dell XPS 13',
-        sku: 'DLXPS13-001',
-        currentStock: 2,
-        minStock: 5,
-        status: 'critical'
-      },
-      {
-        id: 2,
-        product: 'Office Chair Ergonomic',
-        sku: 'OFCHR-ERG-002',
-        currentStock: 0,
-        minStock: 3,
-        status: 'out_of_stock'
-      },
-      {
-        id: 3,
-        product: 'Wireless Mouse',
-        sku: 'WLMS-003',
-        currentStock: 8,
-        minStock: 10,
-        status: 'low'
-      },
-      {
-        id: 4,
-        product: 'A4 Printer Paper',
-        sku: 'PAP-A4-500',
-        currentStock: 15,
-        minStock: 20,
-        status: 'warning'
-      }
-    ],
-    pendingApprovals: [
-      {
-        id: 1,
-        type: 'purchase_order',
-        reference: 'PO-2024-156',
-        amount: 125000,
-        requester: 'Mike Chen',
-        department: 'Operations',
-        daysPending: 1,
-        priority: 'high'
-      },
-      {
-        id: 2,
-        type: 'requisition',
-        reference: 'REQ-2024-045',
-        amount: 45000,
-        requester: 'Sarah Johnson',
-        department: 'Marketing',
-        daysPending: 2,
-        priority: 'medium'
-      },
-      {
-        id: 3,
-        type: 'contract',
-        reference: 'CONT-2024-023',
-        amount: 285000,
-        requester: 'Robert Wilson',
-        department: 'IT',
-        daysPending: 3,
-        priority: 'high'
-      }
-    ]
-  };
-
+  // Load dashboard data
   useEffect(() => {
     loadDashboardData();
-  }, [timeRange]);
+  }, [timeRange, user?.organization]);
 
   const loadDashboardData = async () => {
+    if (!user?.organization) return;
+    
     setLoading(true);
     try {
-      // Simulate API call
-      // const response = await dashboardAPI.getDashboardData(timeRange);
-      // setDashboardData(response.data);
+      const response = await fetch(`/api/dashboard/${user.organization}?timeRange=${timeRange}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       
-      setTimeout(() => {
-        setDashboardData(mockDashboardData);
-        setLoading(false);
-      }, 1500);
+      if (response.ok) {
+        const data = await response.json();
+        setDashboardData(data);
+      } else {
+        console.error('Failed to load dashboard data');
+      }
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+    } finally {
       setLoading(false);
     }
+  };
+
+  // CSV Upload Functions
+  const handleCSVUpload = async (e) => {
+    e.preventDefault();
+    if (!csvFile) return;
+
+    setUploadLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('csvFile', csvFile);
+      formData.append('organizationId', user.organization);
+
+      const response = await fetch('/api/users/import', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        setShowCSVUpload(false);
+        setCsvFile(null);
+        loadDashboardData();
+      } else {
+        console.error('CSV upload failed');
+      }
+    } catch (error) {
+      console.error('CSV upload error:', error);
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'text/csv') {
+      setCsvFile(file);
+    }
+  };
+
+  const downloadCSVTemplate = () => {
+    const orgName = user?.organizationName || 'organization';
+    const template = `email,firstName,lastName,role,department
+user1@${orgName.toLowerCase().replace(/\s+/g, '')}.com,John,Doe,manager,Procurement
+user2@${orgName.toLowerCase().replace(/\s+/g, '')}.com,Jane,Smith,user,Operations
+user3@${orgName.toLowerCase().replace(/\s+/g, '')}.com,Mike,Johnson,user,IT`;
+    
+    const blob = new Blob([template], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${orgName.replace(/\s+/g, '_')}_user_import_template.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  // Utility Functions
+  const formatCurrency = (amount) => {
+    if (!amount) return '$0';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  const formatNumber = (number) => {
+    if (!number) return '0';
+    return new Intl.NumberFormat('en-US').format(number);
   };
 
   const getTrendIcon = (change) => {
@@ -237,101 +138,98 @@ const Dashboard = () => {
 
   const getStatusIcon = (status) => {
     const icons = {
-      completed: '✅',
-      warning: '⚠️',
-      info: 'ℹ️',
-      pending: '⏳',
-      critical: '🔴',
-      low: '🟡',
-      out_of_stock: '🚫'
+      completed: '✅', warning: '⚠️', info: 'ℹ️', pending: '⏳',
+      critical: '🔴', low: '🟡', out_of_stock: '🚫', active: '🟢', inactive: '⚫'
     };
     return icons[status] || '⚪';
   };
 
   const getStatusClass = (status) => {
     const classes = {
-      completed: 'status-completed',
-      warning: 'status-warning',
-      info: 'status-info',
-      pending: 'status-pending',
-      critical: 'status-critical',
-      low: 'status-low',
-      out_of_stock: 'status-out-of-stock'
+      completed: 'status-completed', warning: 'status-warning', info: 'status-info',
+      pending: 'status-pending', critical: 'status-critical', low: 'status-low',
+      out_of_stock: 'status-out-of-stock', active: 'status-active', inactive: 'status-inactive'
     };
     return classes[status] || 'status-default';
   };
 
   const getActivityIcon = (type) => {
     const icons = {
-      purchase_order: '📋',
-      stock_alert: '⚠️',
-      supplier: '🏢',
-      bidding: '💰',
-      approval: '✅',
-      requisition: '📝',
-      contract: '📄'
+      purchase_order: '📋', stock_alert: '⚠️', supplier: '🏢', bidding: '💰',
+      approval: '✅', requisition: '📝', contract: '📄', organization: '🏛️',
+      user_registration: '👤', team: '👥'
     };
     return icons[type] || '📢';
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
-
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat('en-US').format(number);
-  };
-
+  // Navigation Handlers
   const handleQuickAction = (action) => {
-    console.log('Quick action:', action);
-    // Navigate to respective page or open modal
-    switch (action) {
-      case 'create_po':
-        // navigate('/procurement/create-purchase-order');
-        break;
-      case 'create_requisition':
-        // navigate('/procurement/requisitions/create');
-        break;
-      case 'view_reports':
-        // navigate('/reports');
-        break;
-      case 'manage_suppliers':
-        // navigate('/suppliers');
-        break;
-      default:
-        console.log('Action:', action);
+    const routes = {
+      manage_team: '/team-management',
+      org_settings: '/organization-settings',
+      billing: '/billing',
+      analytics: '/analytics',
+      reports: '/reports'
+    };
+    
+    if (action === 'invite_users') {
+      setShowCSVUpload(true);
+    } else if (routes[action]) {
+      navigate(routes[action]);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 
   const handleViewAll = (section) => {
-    console.log('View all:', section);
-    // Navigate to respective page
-    // navigate(`/${section}`);
+    const routes = {
+      team: '/team-management',
+      activities: '/activities',
+      suppliers: '/suppliers',
+      approvals: '/approvals',
+      stock: '/inventory'
+    };
+    navigate(routes[section] || '/');
   };
 
+  // Loading State
   if (loading) {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>
-        <p>Loading dashboard data...</p>
+        <p>Loading {user?.organizationName} dashboard...</p>
       </div>
     );
   }
 
   return (
     <div className="dashboard">
-      {/* Header */}
+      {/* Header Section */}
       <div className="dashboard-header">
         <div className="header-content">
-          <h1>Procurement Dashboard</h1>
-          <p>Welcome back! Here's what's happening with your procurement activities.</p>
+          <h1>Welcome back, {user?.firstName}!</h1>
+          <div className="org-info">
+            <span className="org-badge">🏢 {user?.organizationName}</span>
+            <span className="role-badge">👑 {user?.role || 'Admin'}</span>
+          </div>
+          <p>Managing procurement for {user?.organizationName}</p>
         </div>
         <div className="header-actions">
+          <div className="user-actions">
+            <button className="btn-secondary" onClick={() => setShowCSVUpload(true)}>
+              📤 Import Users
+            </button>
+            <button className="btn-secondary" onClick={handleLogout}>
+              🚪 Logout
+            </button>
+          </div>
           <div className="time-range-selector">
             <label>Time Range:</label>
             <select 
@@ -350,7 +248,65 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Overview Metrics */}
+      {/* CSV Upload Modal */}
+      {showCSVUpload && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Import Users via CSV</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowCSVUpload(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>Upload a CSV file to add multiple users to {user?.organizationName}.</p>
+              
+              <div className="csv-template">
+                <button 
+                  className="btn-link"
+                  onClick={downloadCSVTemplate}
+                >
+                  📥 Download CSV Template
+                </button>
+              </div>
+
+              <form onSubmit={handleCSVUpload}>
+                <div className="form-group">
+                  <label>Select CSV File:</label>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileChange}
+                    required
+                  />
+                </div>
+                
+                <div className="modal-actions">
+                  <button 
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setShowCSVUpload(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="btn-primary"
+                    disabled={!csvFile || uploadLoading}
+                  >
+                    {uploadLoading ? 'Uploading...' : 'Import Users'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overview Metrics Section */}
       <div className="overview-metrics">
         <div className="metric-card primary">
           <div className="metric-icon">💰</div>
@@ -359,7 +315,7 @@ const Dashboard = () => {
             <div className="metric-value">{formatCurrency(dashboardData.overview.totalSpend)}</div>
             <div className={`metric-trend ${getTrendClass(dashboardData.overview.spendChange)}`}>
               <span className="trend-icon">{getTrendIcon(dashboardData.overview.spendChange)}</span>
-              <span className="trend-value">{Math.abs(dashboardData.overview.spendChange)}%</span>
+              <span className="trend-value">{Math.abs(dashboardData.overview.spendChange || 0)}%</span>
               <span className="trend-label">vs last period</span>
             </div>
           </div>
@@ -372,7 +328,7 @@ const Dashboard = () => {
             <div className="metric-value">{formatNumber(dashboardData.overview.totalOrders)}</div>
             <div className={`metric-trend ${getTrendClass(dashboardData.overview.ordersChange)}`}>
               <span className="trend-icon">{getTrendIcon(dashboardData.overview.ordersChange)}</span>
-              <span className="trend-value">{Math.abs(dashboardData.overview.ordersChange)}%</span>
+              <span className="trend-value">{Math.abs(dashboardData.overview.ordersChange || 0)}%</span>
               <span className="trend-label">vs last period</span>
             </div>
           </div>
@@ -385,7 +341,7 @@ const Dashboard = () => {
             <div className="metric-value">{formatCurrency(dashboardData.overview.costSavings)}</div>
             <div className={`metric-trend ${getTrendClass(dashboardData.overview.savingsChange)}`}>
               <span className="trend-icon">{getTrendIcon(dashboardData.overview.savingsChange)}</span>
-              <span className="trend-value">{Math.abs(dashboardData.overview.savingsChange)}%</span>
+              <span className="trend-value">{Math.abs(dashboardData.overview.savingsChange || 0)}%</span>
               <span className="trend-label">vs last period</span>
             </div>
           </div>
@@ -404,7 +360,7 @@ const Dashboard = () => {
           <div className="metric-icon">✅</div>
           <div className="metric-content">
             <h3>Compliance Rate</h3>
-            <div className="metric-value">{dashboardData.overview.complianceRate}%</div>
+            <div className="metric-value">{dashboardData.overview.complianceRate || 0}%</div>
             <div className="metric-subtitle">Policy adherence</div>
           </div>
         </div>
@@ -413,7 +369,7 @@ const Dashboard = () => {
           <div className="metric-icon">⏳</div>
           <div className="metric-content">
             <h3>Pending Approvals</h3>
-            <div className="metric-value">{dashboardData.overview.pendingApprovals}</div>
+            <div className="metric-value">{dashboardData.overview.pendingApprovals || 0}</div>
             <div className="metric-subtitle">Require attention</div>
           </div>
         </div>
@@ -423,56 +379,101 @@ const Dashboard = () => {
       <div className="dashboard-content">
         {/* Left Column */}
         <div className="content-left">
-          {/* Quick Actions */}
+          {/* Organization Admin Actions */}
           <div className="dashboard-card">
             <div className="card-header">
-              <h2>Quick Actions</h2>
-              <span className="card-subtitle">Frequently used actions</span>
+              <h2>Organization Admin</h2>
+              <span className="card-subtitle">Manage your organization</span>
             </div>
             <div className="card-content">
               <div className="quick-actions-grid">
                 <button 
-                  className="quick-action"
-                  onClick={() => handleQuickAction('create_po')}
+                  className="quick-action admin-action"
+                  onClick={() => handleQuickAction('manage_team')}
                 >
-                  <span className="action-icon">📋</span>
-                  <span className="action-label">Create PO</span>
+                  <span className="action-icon">👥</span>
+                  <span className="action-label">Team Management</span>
                 </button>
                 <button 
-                  className="quick-action"
-                  onClick={() => handleQuickAction('create_requisition')}
+                  className="quick-action admin-action"
+                  onClick={() => handleQuickAction('org_settings')}
                 >
-                  <span className="action-icon">📝</span>
-                  <span className="action-label">New Requisition</span>
+                  <span className="action-icon">⚙️</span>
+                  <span className="action-label">Organization Settings</span>
                 </button>
                 <button 
-                  className="quick-action"
-                  onClick={() => handleQuickAction('manage_suppliers')}
+                  className="quick-action admin-action"
+                  onClick={() => handleQuickAction('invite_users')}
                 >
-                  <span className="action-icon">🏢</span>
-                  <span className="action-label">Manage Suppliers</span>
+                  <span className="action-icon">📧</span>
+                  <span className="action-label">Invite Users</span>
                 </button>
                 <button 
-                  className="quick-action"
-                  onClick={() => handleQuickAction('view_reports')}
+                  className="quick-action admin-action"
+                  onClick={() => handleQuickAction('billing')}
+                >
+                  <span className="action-icon">💳</span>
+                  <span className="action-label">Billing & Subscription</span>
+                </button>
+                <button 
+                  className="quick-action admin-action"
+                  onClick={() => handleQuickAction('analytics')}
                 >
                   <span className="action-icon">📊</span>
-                  <span className="action-label">View Reports</span>
+                  <span className="action-label">Advanced Analytics</span>
                 </button>
                 <button 
-                  className="quick-action"
-                  onClick={() => handleQuickAction('track_orders')}
+                  className="quick-action admin-action"
+                  onClick={() => handleQuickAction('reports')}
                 >
-                  <span className="action-icon">🚚</span>
-                  <span className="action-label">Track Orders</span>
+                  <span className="action-icon">📈</span>
+                  <span className="action-label">Custom Reports</span>
                 </button>
-                <button 
-                  className="quick-action"
-                  onClick={() => handleQuickAction('analyze_spend')}
-                >
-                  <span className="action-icon">💰</span>
-                  <span className="action-label">Analyze Spend</span>
-                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Team Members */}
+          <div className="dashboard-card">
+            <div className="card-header">
+              <h2>Team Members</h2>
+              <button 
+                className="btn-view-all"
+                onClick={() => handleViewAll('team')}
+              >
+                Manage
+              </button>
+            </div>
+            <div className="card-content">
+              <div className="team-list">
+                {dashboardData.teamMembers?.map(member => (
+                  <div key={member.id} className="team-member">
+                    <div className="member-avatar">
+                      {member.name?.charAt(0) || 'U'}
+                    </div>
+                    <div className="member-info">
+                      <h4>{member.name || 'Unknown User'}</h4>
+                      <p>{member.email || 'No email'}</p>
+                      <div className="member-meta">
+                        <span className={`role-badge ${member.role}`}>
+                          {member.role || 'user'}
+                        </span>
+                        <span className={`status ${getStatusClass(member.status)}`}>
+                          {getStatusIcon(member.status)} {member.status || 'active'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div className="add-member-card">
+                  <button 
+                    className="add-member-btn"
+                    onClick={() => setShowCSVUpload(true)}
+                  >
+                    <span className="add-icon">+</span>
+                    <span>Add Team Members</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -490,7 +491,7 @@ const Dashboard = () => {
             </div>
             <div className="card-content">
               <div className="activities-list">
-                {dashboardData.recentActivities.map(activity => (
+                {dashboardData.recentActivities?.map(activity => (
                   <div key={activity.id} className="activity-item">
                     <div className="activity-icon">
                       {getActivityIcon(activity.type)}
@@ -513,70 +514,111 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-
-          {/* Stock Alerts */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <h2>Stock Alerts</h2>
-              <span className="card-badge danger">{dashboardData.stockAlerts.length}</span>
-            </div>
-            <div className="card-content">
-              <div className="alerts-list">
-                {dashboardData.stockAlerts.map(alert => (
-                  <div key={alert.id} className="alert-item">
-                    <div className="alert-icon">
-                      {getStatusIcon(alert.status)}
-                    </div>
-                    <div className="alert-content">
-                      <h4>{alert.product}</h4>
-                      <p>SKU: {alert.sku}</p>
-                      <div className="alert-meta">
-                        <span>Current: {alert.currentStock}</span>
-                        <span>Min: {alert.minStock}</span>
-                      </div>
-                    </div>
-                    <div className="alert-actions">
-                      <button className="btn-action small">
-                        Create PO
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Column */}
         <div className="content-right">
-          {/* Pending Approvals */}
+          {/* Analytics Overview */}
           <div className="dashboard-card">
             <div className="card-header">
-              <h2>Pending Approvals</h2>
-              <span className="card-badge warning">{dashboardData.pendingApprovals.length}</span>
+              <h2>Analytics Overview</h2>
+              <span className="card-subtitle">Key performance indicators</span>
             </div>
             <div className="card-content">
-              <div className="approvals-list">
-                {dashboardData.pendingApprovals.map(approval => (
-                  <div key={approval.id} className="approval-item">
-                    <div className="approval-type">
-                      {getActivityIcon(approval.type)}
-                    </div>
-                    <div className="approval-content">
-                      <h4>{approval.reference}</h4>
-                      <p>{formatCurrency(approval.amount)} • {approval.department}</p>
-                      <div className="approval-meta">
-                        <span>By: {approval.requester}</span>
-                        <span>{approval.daysPending} day(s) pending</span>
-                      </div>
-                    </div>
-                    <div className="approval-actions">
-                      <button className="btn-action small primary">
-                        Review
-                      </button>
-                    </div>
+              <div className="analytics-grid">
+                <div className="analytics-item">
+                  <div className="analytics-label">Procurement Efficiency</div>
+                  <div className="analytics-value">{dashboardData.procurementMetrics?.approvalRate || 0}%</div>
+                  <div className="analytics-progress">
+                    <div 
+                      className="progress-bar"
+                      style={{ width: `${dashboardData.procurementMetrics?.approvalRate || 0}%` }}
+                    ></div>
                   </div>
-                ))}
+                </div>
+
+                <div className="analytics-item">
+                  <div className="analytics-label">Cost Optimization</div>
+                  <div className="analytics-value">
+                    {(dashboardData.overview.costSavings > 50000) ? 'High' : 
+                     (dashboardData.overview.costSavings > 25000) ? 'Medium' : 'Low'}
+                  </div>
+                  <div className="analytics-progress">
+                    <div 
+                      className="progress-bar"
+                      style={{ width: `${Math.min(100, (dashboardData.overview.costSavings || 0) / 100000 * 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="analytics-item">
+                  <div className="analytics-label">Supplier Performance</div>
+                  <div className="analytics-value">
+                    {dashboardData.supplierPerformance?.length ? 
+                      (dashboardData.supplierPerformance.reduce((acc, curr) => acc + curr.rating, 0) / dashboardData.supplierPerformance.length).toFixed(1) : '0.0'}/5
+                  </div>
+                  <div className="analytics-progress">
+                    <div 
+                      className="progress-bar"
+                      style={{ width: `${dashboardData.supplierPerformance?.length ? 
+                        (dashboardData.supplierPerformance.reduce((acc, curr) => acc + curr.rating, 0) / dashboardData.supplierPerformance.length) * 20 : 0}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="analytics-item">
+                  <div className="analytics-label">Operational Excellence</div>
+                  <div className="analytics-value">{dashboardData.overview.complianceRate || 0}%</div>
+                  <div className="analytics-progress">
+                    <div 
+                      className="progress-bar"
+                      style={{ width: `${dashboardData.overview.complianceRate || 0}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="dashboard-card">
+            <div className="card-header">
+              <h2>Operational Metrics</h2>
+              <span className="card-subtitle">Real-time overview</span>
+            </div>
+            <div className="card-content">
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <div className="stat-icon">📝</div>
+                  <div className="stat-content">
+                    <div className="stat-value">{dashboardData.quickStats?.pendingRequisitions || 0}</div>
+                    <div className="stat-label">Pending Requisitions</div>
+                  </div>
+                </div>
+
+                <div className="stat-item">
+                  <div className="stat-icon">💰</div>
+                  <div className="stat-content">
+                    <div className="stat-value">{dashboardData.quickStats?.openRFQs || 0}</div>
+                    <div className="stat-label">Open RFQs</div>
+                  </div>
+                </div>
+
+                <div className="stat-item">
+                  <div className="stat-icon">⚖️</div>
+                  <div className="stat-content">
+                    <div className="stat-value">{dashboardData.quickStats?.activeBids || 0}</div>
+                    <div className="stat-label">Active Bids</div>
+                  </div>
+                </div>
+
+                <div className="stat-item">
+                  <div className="stat-icon">🚨</div>
+                  <div className="stat-content">
+                    <div className="stat-value">{dashboardData.quickStats?.overdueDeliveries || 0}</div>
+                    <div className="stat-label">Overdue Deliveries</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -584,7 +626,7 @@ const Dashboard = () => {
           {/* Supplier Performance */}
           <div className="dashboard-card">
             <div className="card-header">
-              <h2>Top Suppliers</h2>
+              <h2>Supplier Performance</h2>
               <button 
                 className="btn-view-all"
                 onClick={() => handleViewAll('suppliers')}
@@ -594,23 +636,23 @@ const Dashboard = () => {
             </div>
             <div className="card-content">
               <div className="suppliers-list">
-                {dashboardData.supplierPerformance.map(supplier => (
+                {dashboardData.supplierPerformance?.map(supplier => (
                   <div key={supplier.id} className="supplier-item">
                     <div className="supplier-avatar">
-                      {supplier.name.charAt(0)}
+                      {supplier.name?.charAt(0) || 'S'}
                     </div>
                     <div className="supplier-content">
-                      <h4>{supplier.name}</h4>
+                      <h4>{supplier.name || 'Unknown Supplier'}</h4>
                       <div className="supplier-rating">
                         <span className="stars">
-                          {'★'.repeat(Math.floor(supplier.rating))}
-                          {'☆'.repeat(5 - Math.floor(supplier.rating))}
+                          {'★'.repeat(Math.floor(supplier.rating || 0))}
+                          {'☆'.repeat(5 - Math.floor(supplier.rating || 0))}
                         </span>
-                        <span className="rating-value">{supplier.rating}</span>
+                        <span className="rating-value">{(supplier.rating || 0).toFixed(1)}</span>
                       </div>
                       <div className="supplier-metrics">
-                        <span>Delivery: {supplier.delivery}%</span>
-                        <span>Quality: {supplier.quality}%</span>
+                        <span>Delivery: {(supplier.delivery || 0).toFixed(1)}%</span>
+                        <span>Quality: {(supplier.quality || 0).toFixed(1)}%</span>
                       </div>
                     </div>
                     <div className="supplier-spend">
@@ -623,142 +665,6 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Procurement Metrics */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <h2>Procurement Metrics</h2>
-              <span className="card-subtitle">Key performance indicators</span>
-            </div>
-            <div className="card-content">
-              <div className="metrics-grid">
-                <div className="metric-item">
-                  <div className="metric-label">Avg Processing Time</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.avgProcessingTime} days</div>
-                  <div className="metric-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: '85%' }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="metric-item">
-                  <div className="metric-label">Approval Rate</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.approvalRate}%</div>
-                  <div className="metric-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: `${dashboardData.procurementMetrics.approvalRate}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="metric-item">
-                  <div className="metric-label">Compliance Rate</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.complianceRate}%</div>
-                  <div className="metric-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: `${dashboardData.procurementMetrics.complianceRate}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="metric-item">
-                  <div className="metric-label">Supplier Diversity</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.supplierDiversity}%</div>
-                  <div className="metric-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: `${dashboardData.procurementMetrics.supplierDiversity}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="metric-item">
-                  <div className="metric-label">Cost Avoidance</div>
-                  <div className="metric-value">{formatCurrency(dashboardData.procurementMetrics.costAvoidance)}</div>
-                  <div className="metric-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: '75%' }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="metric-item">
-                  <div className="metric-label">Cycle Time</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.cycleTime} days</div>
-                  <div className="metric-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: '70%' }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <h2>Quick Stats</h2>
-              <span className="card-subtitle">At a glance</span>
-            </div>
-            <div className="card-content">
-              <div className="stats-grid">
-                <div className="stat-item">
-                  <div className="stat-icon">📝</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.pendingRequisitions}</div>
-                    <div className="stat-label">Pending Requisitions</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">💰</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.openRFQs}</div>
-                    <div className="stat-label">Open RFQs</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">⚖️</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.activeBids}</div>
-                    <div className="stat-label">Active Bids</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">🚨</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.overdueDeliveries}</div>
-                    <div className="stat-label">Overdue Deliveries</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">📊</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.supplierEvaluations}</div>
-                    <div className="stat-label">Supplier Evaluations</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">📄</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.contractRenewals}</div>
-                    <div className="stat-label">Contract Renewals</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

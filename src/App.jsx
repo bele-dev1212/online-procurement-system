@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { useAuth } from './contexts/AuthContext';
 import './App.css';
 
@@ -18,6 +19,15 @@ import ForgotPassword from './pages/Auth/ForgotPassword/ForgotPassword';
 
 // Import Organization Registration
 import OrganizationRegister from './pages/Auth/OrganizationRegister/OrganizationRegister';
+
+// Import Dashboard
+import Dashboard from './pages/Dashboard/Dashboard';
+
+// Import Organization Management Pages
+import OrganizationSettings from './pages/Organization/OrganizationSettings/OrganizationSettings';
+import TeamManagement from './pages/Organization/TeamManagement/TeamManagement';
+import Billing from './pages/Organization/Billing/Billing';
+import Subscription from './pages/Organization/Subscription/Subscription';
 
 // Import Error Pages
 import NotFound from './pages/Errors/NotFound/NotFound';
@@ -46,94 +56,92 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="App">
-          <Routes>
-            {/* 🏠 Marketing Pages (Public) */}
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/contact" element={<Contact />} />
+        <NotificationProvider>
+          <div className="App">
+            <Routes>
+              {/* 🏠 Marketing Pages (Public) */}
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/contact" element={<Contact />} />
 
-            {/* 🔐 Auth Pages (Public) */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/organization/register" element={<OrganizationRegister />} />
+              {/* 🔐 Auth Pages (Public) */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/organization/register" element={<OrganizationRegister />} />
 
-            {/* 🏢 Application Pages (Protected) - Commented out until files exist */}
-            {/* <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/suppliers/*" element={
-              <ProtectedRoute>
-                <Suppliers />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/inventory/*" element={
-              <ProtectedRoute>
-                <Inventory />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/bidding/*" element={
-              <ProtectedRoute>
-                <Bidding />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/reports/*" element={
-              <ProtectedRoute>
-                <Reports />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/settings/*" element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            } /> */}
+              {/* 🏢 Application Pages (Protected) */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
 
-            {/* ⚙️ Organization Management (Protected) - Commented out until files exist */}
-            {/* <Route path="/organization/settings" element={
-              <ProtectedRoute>
-                <OrganizationSettings />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/organization/team" element={
-              <ProtectedRoute>
-                <TeamManagement />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/organization/billing" element={
-              <ProtectedRoute>
-                <Billing />
-              </ProtectedRoute>
-            } /> */}
+              {/* ⚙️ Organization Management (Protected) */}
+              <Route path="/organization/settings" element={
+                <ProtectedRoute>
+                  <OrganizationSettings />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/team-management" element={
+                <ProtectedRoute>
+                  <TeamManagement />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/billing" element={
+                <ProtectedRoute>
+                  <Billing />
+                </ProtectedRoute>
+              } />
 
-            {/* Temporary dashboard route for testing */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <div style={{ padding: '20px' }}>
-                  <h1>Dashboard</h1>
-                  <p>Welcome to your dashboard! This is a temporary page.</p>
-                  <p>Create the actual component files to replace this.</p>
-                </div>
-              </ProtectedRoute>
-            } />
+              <Route path="/subscription" element={
+                <ProtectedRoute>
+                  <Subscription />
+                </ProtectedRoute>
+              } />
 
-            {/* ❌ Error Pages */}
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
-          </Routes>
-        </div>
+              {/* Procurement Routes - Commented out until files exist */}
+              {/* <Route path="/suppliers/*" element={
+                <ProtectedRoute>
+                  <Suppliers />
+                </ProtectedRoute>
+              } /> */}
+              
+              {/* <Route path="/inventory/*" element={
+                <ProtectedRoute>
+                  <Inventory />
+                </ProtectedRoute>
+              } /> */}
+              
+              {/* <Route path="/bidding/*" element={
+                <ProtectedRoute>
+                  <Bidding />
+                </ProtectedRoute>
+              } /> */}
+              
+              {/* <Route path="/reports/*" element={
+                <ProtectedRoute>
+                  <Reports />
+                </ProtectedRoute>
+              } /> */}
+              
+              {/* <Route path="/settings/*" element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } /> */}
+
+              {/* ❌ Error Pages */}
+              <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />
+            </Routes>
+          </div>
+        </NotificationProvider>
       </AuthProvider>
     </Router>
   );
