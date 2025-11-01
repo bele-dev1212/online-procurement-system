@@ -91,7 +91,8 @@ export const useOrganizationRegister = () => {
     setError('');
 
     try {
-      const response = await fetch('/api/organizations/register', {
+      // Real backend API call
+      const response = await fetch('http://localhost:5000/api/organizations/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,10 +106,21 @@ export const useOrganizationRegister = () => {
         throw new Error(result.message || 'Registration failed');
       }
 
-      // Registration successful
+      // Store token and user data in localStorage
+      if (result.data?.token) {
+        localStorage.setItem('auth_token', result.data.token);
+        localStorage.setItem('user_data', JSON.stringify(result.data.user));
+        localStorage.setItem('organization_data', JSON.stringify(result.data.organization));
+      }
+
+      console.log('Registration successful:', result);
+
+      // Navigate to login page on success
+      navigate('/login');
       return true;
 
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.message || 'Registration failed. Please try again.');
       return false;
     } finally {
