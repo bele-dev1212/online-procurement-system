@@ -1,0 +1,476 @@
+/**
+ * CSS Custom Properties (Variables)
+ * Design system variables for ProcurementPro
+ */
+
+:root {
+  /* ===== Color System ===== */
+  
+  /* Primary Colors - Blue */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+  
+  /* Secondary Colors - Gray */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+  --color-gray-950: #020617;
+  
+  /* Success Colors - Green */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+  --color-success-950: #052e16;
+  
+  /* Warning Colors - Amber */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-warning-950: #451a03;
+  
+  /* Error Colors - Red */
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+  --color-error-950: #450a0a;
+  
+  /* Info Colors - Sky */
+  --color-info-50: #f0f9ff;
+  --color-info-100: #e0f2fe;
+  --color-info-200: #bae6fd;
+  --color-info-300: #7dd3fc;
+  --color-info-400: #38bdf8;
+  --color-info-500: #0ea5e9;
+  --color-info-600: #0284c7;
+  --color-info-700: #0369a1;
+  --color-info-800: #075985;
+  --color-info-900: #0c4a6e;
+  --color-info-950: #082f49;
+  
+  /* Accent Colors - Violet */
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #ede9fe;
+  --color-accent-200: #ddd6fe;
+  --color-accent-300: #c4b5fd;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #8b5cf6;
+  --color-accent-600: #7c3aed;
+  --color-accent-700: #6d28d9;
+  --color-accent-800: #5b21b6;
+  --color-accent-900: #4c1d95;
+  --color-accent-950: #2e1065;
+  
+  /* ===== Semantic Colors ===== */
+  
+  /* Background Colors */
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-background-tertiary: #f1f5f9;
+  --color-background-overlay: rgba(15, 23, 42, 0.8);
+  
+  /* Text Colors */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
+  --color-text-inverse: #ffffff;
+  --color-text-disabled: #94a3b8;
+  
+  /* Border Colors */
+  --color-border-primary: #e2e8f0;
+  --color-border-secondary: #cbd5e1;
+  --color-border-tertiary: #94a3b8;
+  --color-border-focus: #3b82f6;
+  --color-border-error: #ef4444;
+  
+  /* Status Colors */
+  --color-status-success: var(--color-success-500);
+  --color-status-warning: var(--color-warning-500);
+  --color-status-error: var(--color-error-500);
+  --color-status-info: var(--color-info-500);
+  
+  /* ===== Typography System ===== */
+  
+  /* Font Families */
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-monospace: 'Fira Code', 'Courier New', monospace;
+  --font-family-heading: var(--font-family-primary);
+  
+  /* Font Sizes */
+  --font-size-xs: 1.2rem;    /* 12px */
+  --font-size-sm: 1.4rem;    /* 14px */
+  --font-size-base: 1.6rem;  /* 16px */
+  --font-size-lg: 1.8rem;    /* 18px */
+  --font-size-xl: 2rem;      /* 20px */
+  --font-size-2xl: 2.4rem;   /* 24px */
+  --font-size-3xl: 3rem;     /* 30px */
+  --font-size-4xl: 3.6rem;   /* 36px */
+  --font-size-5xl: 4.8rem;   /* 48px */
+  
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.3;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  
+  /* ===== Spacing System ===== */
+  
+  /* Base spacing unit: 4px */
+  --spacing-px: 1px;
+  --spacing-0: 0;
+  --spacing-1: 0.4rem;   /* 4px */
+  --spacing-2: 0.8rem;   /* 8px */
+  --spacing-3: 1.2rem;   /* 12px */
+  --spacing-4: 1.6rem;   /* 16px */
+  --spacing-5: 2rem;     /* 20px */
+  --spacing-6: 2.4rem;   /* 24px */
+  --spacing-8: 3.2rem;   /* 32px */
+  --spacing-10: 4rem;    /* 40px */
+  --spacing-12: 4.8rem;  /* 48px */
+  --spacing-16: 6.4rem;  /* 64px */
+  --spacing-20: 8rem;    /* 80px */
+  --spacing-24: 9.6rem;  /* 96px */
+  
+  /* ===== Layout & Sizing ===== */
+  
+  /* Container */
+  --container-max-width: 1440px;
+  --container-padding: var(--spacing-4);
+  
+  /* Header */
+  --header-height: 6.4rem;
+  --header-z-index: 1000;
+  
+  /* Sidebar */
+  --sidebar-width: 28rem;
+  --sidebar-collapsed-width: 8rem;
+  --sidebar-z-index: 900;
+  
+  /* Footer */
+  --footer-height: 6rem;
+  
+  /* Content */
+  --content-max-width: 1200px;
+  --content-padding: var(--spacing-6);
+  
+  /* ===== Border Radius ===== */
+  --border-radius-none: 0;
+  --border-radius-sm: 0.2rem;   /* 2px */
+  --border-radius-base: 0.4rem; /* 4px */
+  --border-radius-md: 0.6rem;   /* 6px */
+  --border-radius-lg: 0.8rem;   /* 8px */
+  --border-radius-xl: 1.2rem;   /* 12px */
+  --border-radius-2xl: 1.6rem;  /* 16px */
+  --border-radius-3xl: 2.4rem;  /* 24px */
+  --border-radius-full: 9999px;
+  
+  /* ===== Shadows ===== */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  
+  /* ===== Z-Index Scale ===== */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-toast: 1080;
+  
+  /* ===== Transitions & Animations ===== */
+  
+  /* Transition Durations */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+  
+  /* Transition Timing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Common Transitions */
+  --transition-colors: color var(--duration-150) var(--ease-in-out), background-color var(--duration-150) var(--ease-in-out), border-color var(--duration-150) var(--ease-in-out);
+  --transition-opacity: opacity var(--duration-150) var(--ease-in-out);
+  --transition-transform: transform var(--duration-300) var(--ease-in-out);
+  --transition-shadow: box-shadow var(--duration-150) var(--ease-in-out);
+  --transition-all: all var(--duration-300) var(--ease-in-out);
+  
+  /* Animation Keyframes */
+  --animation-spin: spin 1s linear infinite;
+  --animation-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animation-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animation-bounce: bounce 1s infinite;
+  
+  /* ===== Breakpoints ===== */
+  /* Note: Use in @media queries with min-width */
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  
+  /* ===== Component Specific Variables ===== */
+  
+  /* Button */
+  --button-height-sm: 3.2rem;
+  --button-height-base: 4rem;
+  --button-height-lg: 4.8rem;
+  --button-padding-x-sm: var(--spacing-3);
+  --button-padding-x-base: var(--spacing-4);
+  --button-padding-x-lg: var(--spacing-6);
+  --button-border-radius: var(--border-radius-md);
+  --button-font-weight: var(--font-weight-medium);
+  
+  /* Input */
+  --input-height-sm: 3.2rem;
+  --input-height-base: 4rem;
+  --input-height-lg: 4.8rem;
+  --input-padding-x: var(--spacing-3);
+  --input-padding-y: var(--spacing-2);
+  --input-border-radius: var(--border-radius-md);
+  --input-border-width: 1px;
+  --input-border-color: var(--color-border-primary);
+  --input-background: var(--color-background-primary);
+  
+  /* Card */
+  --card-padding: var(--spacing-6);
+  --card-border-radius: var(--border-radius-lg);
+  --card-background: var(--color-background-primary);
+  --card-border: 1px solid var(--color-border-primary);
+  --card-shadow: var(--shadow-sm);
+  
+  /* Table */
+  --table-cell-padding: var(--spacing-3) var(--spacing-4);
+  --table-header-background: var(--color-background-secondary);
+  --table-border-color: var(--color-border-primary);
+  --table-row-hover: var(--color-background-secondary);
+  
+  /* Modal */
+  --modal-max-width: 600px;
+  --modal-backdrop-color: rgba(15, 23, 42, 0.8);
+  --modal-border-radius: var(--border-radius-xl);
+  --modal-padding: var(--spacing-6);
+  
+  /* Alert */
+  --alert-padding: var(--spacing-4);
+  --alert-border-radius: var(--border-radius-md);
+  --alert-icon-size: 2rem;
+  
+  /* Badge */
+  --badge-padding-y: var(--spacing-1);
+  --badge-padding-x: var(--spacing-2);
+  --badge-font-size: var(--font-size-xs);
+  --badge-font-weight: var(--font-weight-medium);
+  --badge-border-radius: var(--border-radius-full);
+  
+  /* Avatar */
+  --avatar-size-sm: 2.4rem;
+  --avatar-size-base: 3.2rem;
+  --avatar-size-lg: 4rem;
+  --avatar-size-xl: 4.8rem;
+  --avatar-size-2xl: 6.4rem;
+  
+  /* Progress */
+  --progress-height: 0.8rem;
+  --progress-border-radius: var(--border-radius-full);
+  --progress-background: var(--color-gray-200);
+  
+  /* Skeleton */
+  --skeleton-background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-300) 50%, var(--color-gray-200) 75%);
+  --skeleton-animation: skeleton-loading 2s infinite;
+  
+  /* ===== Data Visualization Colors ===== */
+  --chart-color-1: var(--color-primary-500);
+  --chart-color-2: var(--color-success-500);
+  --chart-color-3: var(--color-warning-500);
+  --chart-color-4: var(--color-error-500);
+  --chart-color-5: var(--color-accent-500);
+  --chart-color-6: var(--color-info-500);
+  --chart-color-7: #8b5cf6;
+  --chart-color-8: #06b6d4;
+  --chart-color-9: #84cc16;
+  --chart-color-10: #f97316;
+  
+  /* ===== Procurement Specific Colors ===== */
+  
+  /* Status Colors for Procurement */
+  --status-draft: var(--color-gray-500);
+  --status-pending: var(--color-warning-500);
+  --status-approved: var(--color-success-500);
+  --status-rejected: var(--color-error-500);
+  --status-ordered: var(--color-primary-500);
+  --status-received: var(--color-success-600);
+  --status-cancelled: var(--color-error-600);
+  --status-completed: var(--color-gray-600);
+  
+  /* Priority Colors */
+  --priority-low: var(--color-success-500);
+  --priority-medium: var(--color-warning-500);
+  --priority-high: var(--color-error-500);
+  --priority-critical: var(--color-error-700);
+  
+  /* Risk Level Colors */
+  --risk-low: var(--color-success-500);
+  --risk-medium: var(--color-warning-500);
+  --risk-high: var(--color-error-500);
+  --risk-critical: var(--color-error-700);
+}
+
+/* Keyframe Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* CSS Custom Properties for animations */
+:root {
+  --animation-fade-in: fadeIn var(--duration-300) var(--ease-out);
+  --animation-slide-in-up: slideInUp var(--duration-300) var(--ease-out);
+  --animation-slide-in-down: slideInDown var(--duration-300) var(--ease-out);
+  --animation-scale-in: scaleIn var(--duration-200) var(--ease-out);
+}

@@ -1,0 +1,1011 @@
+/**
+ * CSS Mixins and Utility Classes
+ * Reusable styles and component patterns for ProcurementPro
+ */
+
+/* ===== Layout Mixins ===== */
+
+/* Flexbox Center */
+@define-mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Flexbox Center Vertical */
+@define-mixin flex-center-vertical {
+  display: flex;
+  align-items: center;
+}
+
+/* Flexbox Center Horizontal */
+@define-mixin flex-center-horizontal {
+  display: flex;
+  justify-content: center;
+}
+
+/* Flexbox Space Between */
+@define-mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Grid Center */
+@define-mixin grid-center {
+  display: grid;
+  place-items: center;
+}
+
+/* Container Mixin */
+@define-mixin container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* ===== Typography Mixins ===== */
+
+/* Text Ellipsis */
+@define-mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Multi-line Text Ellipsis */
+@define-mixin text-ellipsis-multiline $lines: 2 {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Font Smoothing */
+@define-mixin font-smoothing {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Visual Mixins ===== */
+
+/* Visually Hidden (for accessibility) */
+@define-mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Clearfix */
+@define-mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+/* Aspect Ratio */
+@define-mixin aspect-ratio $width, $height {
+  position: relative;
+  
+  &::before {
+    content: "";
+    display: block;
+    padding-top: calc($height / $width * 100%);
+  }
+  
+  & > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* ===== Interaction Mixins ===== */
+
+/* Button Reset */
+@define-mixin button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* Input Reset */
+@define-mixin input-reset {
+  background: none;
+  border: none;
+  outline: none;
+  font: inherit;
+  color: inherit;
+  
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+}
+
+/* Focus Ring */
+@define-mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--border-radius-sm);
+  }
+}
+
+/* Hover Lift Effect */
+@define-mixin hover-lift {
+  transition: var(--transition-transform), var(--transition-shadow);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* ===== Component Mixins ===== */
+
+/* Card Base */
+@define-mixin card {
+  background: var(--card-background);
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--card-padding);
+}
+
+/* Card Interactive */
+@define-mixin card-interactive {
+  @mixin card;
+  transition: var(--transition-all);
+  cursor: pointer;
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-secondary);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+/* Button Base */
+@define-mixin button-base {
+  @mixin button-reset;
+  @mixin flex-center-vertical;
+  @mixin focus-ring;
+  
+  position: relative;
+  font-weight: var(--button-font-weight);
+  border-radius: var(--button-border-radius);
+  transition: var(--transition-all);
+  text-decoration: none;
+  border: 1px solid transparent;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+/* Button Sizes */
+@define-mixin button-size $size: base {
+  @if $size == sm {
+    height: var(--button-height-sm);
+    padding: 0 var(--button-padding-x-sm);
+    font-size: var(--font-size-sm);
+    gap: var(--spacing-2);
+  }
+  
+  @if $size == base {
+    height: var(--button-height-base);
+    padding: 0 var(--button-padding-x-base);
+    font-size: var(--font-size-base);
+    gap: var(--spacing-3);
+  }
+  
+  @if $size == lg {
+    height: var(--button-height-lg);
+    padding: 0 var(--button-padding-x-lg);
+    font-size: var(--font-size-lg);
+    gap: var(--spacing-3);
+  }
+}
+
+/* Button Variants */
+@define-mixin button-variant $variant: primary {
+  @if $variant == primary {
+    background: var(--color-primary-600);
+    color: var(--color-text-inverse);
+    border-color: var(--color-primary-600);
+    
+    &:hover:not(:disabled) {
+      background: var(--color-primary-700);
+      border-color: var(--color-primary-700);
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--color-primary-800);
+      border-color: var(--color-primary-800);
+    }
+  }
+  
+  @if $variant == secondary {
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-primary);
+    
+    &:hover:not(:disabled) {
+      background: var(--color-background-secondary);
+      border-color: var(--color-border-secondary);
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--color-background-tertiary);
+    }
+  }
+  
+  @if $variant == ghost {
+    background: transparent;
+    color: var(--color-text-primary);
+    border-color: transparent;
+    
+    &:hover:not(:disabled) {
+      background: var(--color-background-secondary);
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--color-background-tertiary);
+    }
+  }
+  
+  @if $variant == danger {
+    background: var(--color-error-600);
+    color: var(--color-text-inverse);
+    border-color: var(--color-error-600);
+    
+    &:hover:not(:disabled) {
+      background: var(--color-error-700);
+      border-color: var(--color-error-700);
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--color-error-800);
+      border-color: var(--color-error-800);
+    }
+  }
+  
+  @if $variant == success {
+    background: var(--color-success-600);
+    color: var(--color-text-inverse);
+    border-color: var(--color-success-600);
+    
+    &:hover:not(:disabled) {
+      background: var(--color-success-700);
+      border-color: var(--color-success-700);
+    }
+    
+    &:active:not(:disabled) {
+      background: var(--color-success-800);
+      border-color: var(--color-success-800);
+    }
+  }
+}
+
+/* Input Base */
+@define-mixin input-base {
+  @mixin input-reset;
+  @mixin focus-ring;
+  
+  width: 100%;
+  background: var(--input-background);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--input-border-radius);
+  transition: var(--transition-colors);
+  
+  &:focus {
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  &:disabled {
+    background: var(--color-background-secondary);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+  
+  &.error {
+    border-color: var(--color-border-error);
+    
+    &:focus {
+      border-color: var(--color-border-error);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+/* Input Sizes */
+@define-mixin input-size $size: base {
+  @if $size == sm {
+    height: var(--input-height-sm);
+    padding: var(--spacing-1) var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+  
+  @if $size == base {
+    height: var(--input-height-base);
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-base);
+  }
+  
+  @if $size == lg {
+    height: var(--input-height-lg);
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* Badge Base */
+@define-mixin badge-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--badge-font-size);
+  font-weight: var(--badge-font-weight);
+  border-radius: var(--badge-border-radius);
+  padding: var(--badge-padding-y) var(--badge-padding-x);
+  white-space: nowrap;
+}
+
+/* Badge Variants */
+@define-mixin badge-variant $variant: default {
+  @if $variant == default {
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+    border: 1px solid var(--color-gray-200);
+  }
+  
+  @if $variant == primary {
+    background: var(--color-primary-100);
+    color: var(--color-primary-700);
+    border: 1px solid var(--color-primary-200);
+  }
+  
+  @if $variant == success {
+    background: var(--color-success-100);
+    color: var(--color-success-700);
+    border: 1px solid var(--color-success-200);
+  }
+  
+  @if $variant == warning {
+    background: var(--color-warning-100);
+    color: var(--color-warning-700);
+    border: 1px solid var(--color-warning-200);
+  }
+  
+  @if $variant == error {
+    background: var(--color-error-100);
+    color: var(--color-error-700);
+    border: 1px solid var(--color-error-200);
+  }
+  
+  @if $variant == info {
+    background: var(--color-info-100);
+    color: var(--color-info-700);
+    border: 1px solid var(--color-info-200);
+  }
+}
+
+/* Alert Base */
+@define-mixin alert-base {
+  @mixin card;
+  
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--alert-padding);
+  border-radius: var(--alert-border-radius);
+  border-left: 4px solid transparent;
+}
+
+/* Alert Variants */
+@define-mixin alert-variant $variant: info {
+  @if $variant == info {
+    background: var(--color-info-50);
+    border-left-color: var(--color-info-500);
+    color: var(--color-info-700);
+    
+    .alert-icon {
+      color: var(--color-info-500);
+    }
+  }
+  
+  @if $variant == success {
+    background: var(--color-success-50);
+    border-left-color: var(--color-success-500);
+    color: var(--color-success-700);
+    
+    .alert-icon {
+      color: var(--color-success-500);
+    }
+  }
+  
+  @if $variant == warning {
+    background: var(--color-warning-50);
+    border-left-color: var(--color-warning-500);
+    color: var(--color-warning-700);
+    
+    .alert-icon {
+      color: var(--color-warning-500);
+    }
+  }
+  
+  @if $variant == error {
+    background: var(--color-error-50);
+    border-left-color: var(--color-error-500);
+    color: var(--color-error-700);
+    
+    .alert-icon {
+      color: var(--color-error-500);
+    }
+  }
+}
+
+/* Table Base */
+@define-mixin table-base {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-background-primary);
+}
+
+/* Table Row Styles */
+@define-mixin table-row {
+  border-bottom: 1px solid var(--table-border-color);
+  transition: var(--transition-colors);
+  
+  &:hover {
+    background: var(--table-row-hover);
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Table Cell Styles */
+@define-mixin table-cell {
+  padding: var(--table-cell-padding);
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Table Header Styles */
+@define-mixin table-header {
+  @mixin table-cell;
+  
+  background: var(--table-header-background);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  border-bottom: 2px solid var(--table-border-color);
+}
+
+/* ===== Utility Mixins ===== */
+
+/* Screen Reader Only */
+.sr-only {
+  @mixin visually-hidden;
+}
+
+/* Truncate Text */
+.truncate {
+  @mixin text-ellipsis;
+}
+
+/* Line Clamp */
+.line-clamp-2 { @mixin text-ellipsis-multiline 2; }
+.line-clamp-3 { @mixin text-ellipsis-multiline 3; }
+.line-clamp-4 { @mixin text-ellipsis-multiline 4; }
+
+/* Scrollbar Hide */
+@define-mixin scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+  
+  &::-webkit-scrollbar {
+    display: none;           /* Chrome, Safari and Opera */
+  }
+}
+
+/* Scrollbar Styling */
+@define-mixin scrollbar-styled {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--color-gray-100);
+    border-radius: var(--border-radius-full);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-gray-400);
+    border-radius: var(--border-radius-full);
+    
+    &:hover {
+      background: var(--color-gray-500);
+    }
+  }
+}
+
+/* ===== Animation Mixins ===== */
+
+/* Fade In Animation */
+@define-mixin fade-in {
+  animation: var(--animation-fade-in);
+}
+
+/* Slide In Up Animation */
+@define-mixin slide-in-up {
+  animation: var(--animation-slide-in-up);
+}
+
+/* Slide In Down Animation */
+@define-mixin slide-in-down {
+  animation: var(--animation-slide-in-down);
+}
+
+/* Scale In Animation */
+@define-mixin scale-in {
+  animation: var(--animation-scale-in);
+}
+
+/* Spin Animation */
+@define-mixin spin {
+  animation: var(--animation-spin);
+}
+
+/* Pulse Animation */
+@define-mixin pulse {
+  animation: var(--animation-pulse);
+}
+
+/* ===== Responsive Mixins ===== */
+
+/* Mobile First Breakpoints */
+@define-mixin breakpoint-sm {
+  @media (min-width: 640px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin breakpoint-md {
+  @media (min-width: 768px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin breakpoint-lg {
+  @media (min-width: 1024px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin breakpoint-xl {
+  @media (min-width: 1280px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin breakpoint-2xl {
+  @media (min-width: 1536px) {
+    @mixin-content;
+  }
+}
+
+/* Desktop First Breakpoints */
+@define-mixin breakpoint-sm-down {
+  @media (max-width: 639.98px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin breakpoint-md-down {
+  @media (max-width: 767.98px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin breakpoint-lg-down {
+  @media (max-width: 1023.98px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin breakpoint-xl-down {
+  @media (max-width: 1279.98px) {
+    @mixin-content;
+  }
+}
+
+/* ===== Print Mixins ===== */
+
+@define-mixin print {
+  @media print {
+    @mixin-content;
+  }
+}
+
+/* ===== Procurement Specific Mixins ===== */
+
+/* Status Badge */
+@define-mixin status-badge $status {
+  @mixin badge-base;
+  
+  @if $status == draft {
+    @mixin badge-variant default;
+  }
+  
+  @if $status == pending {
+    @mixin badge-variant warning;
+  }
+  
+  @if $status == approved {
+    @mixin badge-variant success;
+  }
+  
+  @if $status == rejected {
+    @mixin badge-variant error;
+  }
+  
+  @if $status == ordered {
+    @mixin badge-variant primary;
+  }
+  
+  @if $status == received {
+    @mixin badge-variant success;
+  }
+  
+  @if $status == cancelled {
+    @mixin badge-variant error;
+  }
+  
+  @if $status == completed {
+    @mixin badge-variant default;
+  }
+}
+
+/* Priority Badge */
+@define-mixin priority-badge $priority {
+  @mixin badge-base;
+  
+  @if $priority == low {
+    background: var(--color-success-100);
+    color: var(--color-success-700);
+    border: 1px solid var(--color-success-200);
+  }
+  
+  @if $priority == medium {
+    background: var(--color-warning-100);
+    color: var(--color-warning-700);
+    border: 1px solid var(--color-warning-200);
+  }
+  
+  @if $priority == high {
+    background: var(--color-error-100);
+    color: var(--color-error-700);
+    border: 1px solid var(--color-error-200);
+  }
+  
+  @if $priority == critical {
+    background: var(--color-error-500);
+    color: var(--color-text-inverse);
+    border: 1px solid var(--color-error-600);
+  }
+}
+
+/* Risk Level Badge */
+@define-mixin risk-badge $risk {
+  @mixin badge-base;
+  
+  @if $risk == low {
+    background: var(--color-success-100);
+    color: var(--color-success-700);
+    border: 1px solid var(--color-success-200);
+  }
+  
+  @if $risk == medium {
+    background: var(--color-warning-100);
+    color: var(--color-warning-700);
+    border: 1px solid var(--color-warning-200);
+  }
+  
+  @if $risk == high {
+    background: var(--color-error-100);
+    color: var(--color-error-700);
+    border: 1px solid var(--color-error-200);
+  }
+  
+  @if $risk == critical {
+    background: var(--color-error-500);
+    color: var(--color-text-inverse);
+    border: 1px solid var(--color-error-600);
+  }
+}
+
+/* Data Table Row */
+@define-mixin data-table-row {
+  @mixin table-row;
+  
+  &:nth-child(even) {
+    background: var(--color-background-secondary);
+    
+    &:hover {
+      background: var(--color-background-tertiary);
+    }
+  }
+}
+
+/* Loading Skeleton */
+@define-mixin skeleton {
+  background: var(--skeleton-background);
+  background-size: 200px 100%;
+  animation: var(--skeleton-animation);
+  border-radius: var(--border-radius-md);
+  
+  &::before {
+    content: "\00a0"; /* Non-breaking space */
+  }
+}
+
+/* Chart Container */
+@define-mixin chart-container {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-6);
+  position: relative;
+}
+
+/* Metric Card */
+@define-mixin metric-card {
+  @mixin card;
+  
+  text-align: center;
+  padding: var(--spacing-8);
+  
+  .metric-value {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--spacing-2);
+  }
+  
+  .metric-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .metric-change {
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    
+    &.positive {
+      color: var(--color-success-600);
+    }
+    
+    &.negative {
+      color: var(--color-error-600);
+    }
+  }
+}
+
+/* Form Group */
+@define-mixin form-group {
+  margin-bottom: var(--spacing-6);
+  
+  .form-label {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-2);
+  }
+  
+  .form-hint {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    margin-top: var(--spacing-1);
+  }
+  
+  .form-error {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-error-600);
+    margin-top: var(--spacing-1);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+/* ===== Component Classes Using Mixins ===== */
+
+/* Button Component Classes */
+.btn {
+  @mixin button-base;
+  @mixin button-size base;
+  @mixin button-variant primary;
+}
+
+.btn-sm {
+  @mixin button-size sm;
+}
+
+.btn-lg {
+  @mixin button-size lg;
+}
+
+.btn-secondary {
+  @mixin button-variant secondary;
+}
+
+.btn-ghost {
+  @mixin button-variant ghost;
+}
+
+.btn-danger {
+  @mixin button-variant danger;
+}
+
+.btn-success {
+  @mixin button-variant success;
+}
+
+/* Input Component Classes */
+.input {
+  @mixin input-base;
+  @mixin input-size base;
+}
+
+.input-sm {
+  @mixin input-size sm;
+}
+
+.input-lg {
+  @mixin input-size lg;
+}
+
+/* Card Component Classes */
+.card {
+  @mixin card;
+}
+
+.card-interactive {
+  @mixin card-interactive;
+}
+
+/* Alert Component Classes */
+.alert {
+  @mixin alert-base;
+  @mixin alert-variant info;
+}
+
+.alert-success {
+  @mixin alert-variant success;
+}
+
+.alert-warning {
+  @mixin alert-variant warning;
+}
+
+.alert-error {
+  @mixin alert-variant error;
+}
+
+/* Badge Component Classes */
+.badge {
+  @mixin badge-base;
+  @mixin badge-variant default;
+}
+
+.badge-primary {
+  @mixin badge-variant primary;
+}
+
+.badge-success {
+  @mixin badge-variant success;
+}
+
+.badge-warning {
+  @mixin badge-variant warning;
+}
+
+.badge-error {
+  @mixin badge-variant error;
+}
+
+.badge-info {
+  @mixin badge-variant info;
+}
+
+/* Table Component Classes */
+.table {
+  @mixin table-base;
+}
+
+.table-row {
+  @mixin table-row;
+}
+
+.table-cell {
+  @mixin table-cell;
+}
+
+.table-header {
+  @mixin table-header;
+}
+
+/* Procurement Specific Component Classes */
+.status-badge-draft { @mixin status-badge draft; }
+.status-badge-pending { @mixin status-badge pending; }
+.status-badge-approved { @mixin status-badge approved; }
+.status-badge-rejected { @mixin status-badge rejected; }
+.status-badge-ordered { @mixin status-badge ordered; }
+.status-badge-received { @mixin status-badge received; }
+.status-badge-cancelled { @mixin status-badge cancelled; }
+.status-badge-completed { @mixin status-badge completed; }
+
+.priority-badge-low { @mixin priority-badge low; }
+.priority-badge-medium { @mixin priority-badge medium; }
+.priority-badge-high { @mixin priority-badge high; }
+.priority-badge-critical { @mixin priority-badge critical; }
+
+.risk-badge-low { @mixin risk-badge low; }
+.risk-badge-medium { @mixin risk-badge medium; }
+.risk-badge-high { @mixin risk-badge high; }
+.risk-badge-critical { @mixin risk-badge critical; }
+
+.data-table-row {
+  @mixin data-table-row;
+}
+
+.skeleton {
+  @mixin skeleton;
+}
+
+.chart-container {
+  @mixin chart-container;
+}
+
+.metric-card {
+  @mixin metric-card;
+}
+
+.form-group {
+  @mixin form-group;
+}
