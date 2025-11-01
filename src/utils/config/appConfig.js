@@ -30,7 +30,7 @@ export const APP_CONFIG = {
     VERSION: '1.0.0',
     DESCRIPTION: 'Enterprise Procurement and Supplier Management System',
   
-   BUILD: import.meta.env.VITE_BUILD_VERSION || '1.0.0',
+   BUILD: process.env.VITE_BUILD_VERSION || '1.0.0',
     ENVIRONMENT: ENVIRONMENT,
     
     // Company Information
@@ -371,13 +371,13 @@ export const APP_CONFIG = {
     LOCAL_STORAGE: {
       PREFIX: 'procurement_',
 
-      ENCRYPTION_KEY: import.meta.env.REACT_APP_STORAGE_KEY || 'default-storage-key',
+      ENCRYPTION_KEY: process.env.REACT_APP_STORAGE_KEY || 'default-storage-key',
       QUOTA: 5 * 1024 * 1024, // 5MB
     },
     SESSION_STORAGE: {
       PREFIX: 'procurement_session_',
 
-      ENCRYPTION_KEY: import.meta.env.REACT_APP_SESSION_KEY || 'default-session-key',
+      ENCRYPTION_KEY: process.env.REACT_APP_SESSION_KEY || 'default-session-key',
     },
     INDEXED_DB: {
       NAME: 'ProcurementDB',
@@ -397,7 +397,7 @@ export const APP_CONFIG = {
       ENABLED: true,
       SERVICE: 'sentry', // 'sentry', 'logrocket', 'custom'
   
-      DSN: import.meta.env.REACT_APP_SENTRY_DSN,
+      DSN: process.env.REACT_APP_SENTRY_DSN,
       ENVIRONMENT: ENVIRONMENT,
       SAMPLE_RATE: ENVIRONMENT === 'production' ? 0.1 : 1.0,
     },
@@ -424,7 +424,7 @@ export const APP_CONFIG = {
     GOOGLE_ANALYTICS: {
       ENABLED: ENVIRONMENT === 'production',
 
-      TRACKING_ID: import.meta.env.REACT_APP_GA_TRACKING_ID,
+      TRACKING_ID: process.env.REACT_APP_GA_TRACKING_ID,
       ANONYMIZE_IP: true,
     },
 
@@ -452,13 +452,13 @@ export const APP_CONFIG = {
       STRIPE: {
         ENABLED: true,
 
-        PUBLIC_KEY: import.meta.env.REACT_APP_STRIPE_PUBLIC_KEY,
+        PUBLIC_KEY: process.env.REACT_APP_STRIPE_PUBLIC_KEY,
         CURRENCY: 'USD',
       },
       PAYPAL: {
         ENABLED: false,
 
-        CLIENT_ID: import.meta.env.REACT_APP_PAYPAL_CLIENT_ID,
+        CLIENT_ID: process.env.REACT_APP_PAYPAL_CLIENT_ID,
       },
     },
 
@@ -467,12 +467,12 @@ export const APP_CONFIG = {
       ADOBE_PDF: {
         ENABLED: true,
 
-        CLIENT_ID: import.meta.env.REACT_APP_ADOBE_CLIENT_ID,
+        CLIENT_ID: process.env.REACT_APP_ADOBE_CLIENT_ID,
       },
       GOOGLE_DOCS: {
         ENABLED: false,
 
-        API_KEY: import.meta.env.REACT_APP_GOOGLE_DOCS_API_KEY,
+        API_KEY: process.env.REACT_APP_GOOGLE_DOCS_API_KEY,
       },
     },
 
@@ -481,14 +481,14 @@ export const APP_CONFIG = {
       EMAIL: {
         SERVICE: 'sendgrid', // 'sendgrid', 'mailgun', 'ses'
   
-        API_KEY: import.meta.env.REACT_APP_EMAIL_API_KEY,
+        API_KEY: process.env.REACT_APP_EMAIL_API_KEY,
       },
       SMS: {
         SERVICE: 'twilio',
 
-        ACCOUNT_SID: import.meta.env.REACT_APP_TWILIO_ACCOUNT_SID,
+        ACCOUNT_SID: process.env.REACT_APP_TWILIO_ACCOUNT_SID,
 
-        AUTH_TOKEN: import.meta.env.REACT_APP_TWILIO_AUTH_TOKEN,
+        AUTH_TOKEN: process.env.REACT_APP_TWILIO_AUTH_TOKEN,
       },
     },
 
@@ -497,14 +497,14 @@ export const APP_CONFIG = {
       AWS_S3: {
         ENABLED: true,
 
-        BUCKET: import.meta.env.REACT_APP_AWS_S3_BUCKET,
+        BUCKET: process.env.REACT_APP_AWS_S3_BUCKET,
 
-        REGION: import.meta.env.REACT_APP_AWS_REGION,
+        REGION: process.env.REACT_APP_AWS_REGION,
       },
       GOOGLE_CLOUD: {
         ENABLED: false,
 
-        BUCKET: import.meta.env.REACT_APP_GCP_BUCKET,
+        BUCKET: process.env.REACT_APP_GCP_BUCKET,
       },
     },
   },
@@ -634,7 +634,7 @@ export const ConfigHelpers = {
     
     requiredEnvVars.forEach(envVar => {
 
-      if (!import.meta.env[envVar]) {
+      if (!process.env[envVar]) {
         errors.push(`Missing required environment variable: ${envVar}`);
       }
     });
@@ -657,9 +657,9 @@ export const ConfigHelpers = {
       build: APP_CONFIG.APP.BUILD,
       environment: ENVIRONMENT,
 
-      timestamp: import.meta.env.REACT_APP_BUILD_TIMESTAMP || new Date().toISOString(),
+      timestamp: process.env.REACT_APP_BUILD_TIMESTAMP || new Date().toISOString(),
 
-      commit: import.meta.env.REACT_APP_COMMIT_HASH || 'unknown',
+      commit: process.env.REACT_APP_COMMIT_HASH || 'unknown',
     };
   },
 };

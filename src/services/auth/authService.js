@@ -6,7 +6,7 @@ class AuthService {
   constructor() {
     this.isRefreshing = false;
     this.failedQueue = [];
-    this.useMockData = !import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_USE_MOCK_API === 'true';
+    this.useMockData = !process.env.VITE_API_BASE_URL || process.env.VITE_USE_MOCK_API === 'true';
     console.log('🔐 AuthService initialized - Using mock data:', this.useMockData);
   }
 
