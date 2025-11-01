@@ -1,38 +1,55 @@
-.App {
-  text-align: center;
+// src/App.jsx
+import React from 'react';
+import './App.css';
+
+function App() {
+  return (
+    <div className="App">
+      <div className="container">
+        <header style={{ 
+          background: 'linear-gradient(135deg, var(--primary-color), var(--primary-dark))',
+          color: 'white',
+          padding: '2rem',
+          textAlign: 'center',
+          borderRadius: '0 0 12px 12px',
+          marginBottom: '2rem'
+        }}>
+          <h1>🚀 Procurement System Ready!</h1>
+          <p>Development server is running successfully</p>
+        </header>
+        
+        <div style={{
+          background: 'var(--bg-white)',
+          padding: '2rem',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ color: 'var(--primary-color)', marginBottom: '1rem' }}>
+            System Status: <span style={{ color: 'var(--success-color)' }}>Online</span>
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+            Your procurement system is set up and ready for development.
+          </p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+            <div style={{ padding: '1rem', background: 'var(--bg-primary)', borderRadius: '6px' }}>
+              <h3>Supplier Management</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Ready to build</p>
+            </div>
+            <div style={{ padding: '1rem', background: 'var(--bg-primary)', borderRadius: '6px' }}>
+              <h3>Purchase Orders</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Ready to build</p>
+            </div>
+            <div style={{ padding: '1rem', background: 'var(--bg-primary)', borderRadius: '6px' }}>
+              <h3>Inventory</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Ready to build</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+export default App;
