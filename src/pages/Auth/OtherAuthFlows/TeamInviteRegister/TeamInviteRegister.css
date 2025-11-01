@@ -1,0 +1,45 @@
+.team-invite-register {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  padding: 2rem;
+}
+
+.invitation-details {
+  background: #f1f5f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  border-left: 4px solid #3b82f6;
+}
+
+.invitation-details p {
+  margin: 0.5rem 0;
+  color: #475569;
+}
+
+.invitation-details strong {
+  color: #1e293b;
+}
+
+.invitation-form {
+  margin-top: 1.5rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.loading, .invitation-error {
+  text-align: center;
+  padding: 3rem;
+}
+
+.invitation-error h2 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+/* Inherits other styles from OrganizationRegister.css */
