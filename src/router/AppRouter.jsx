@@ -44,7 +44,7 @@ const SystemSettings = lazy(() => import('../pages/Settings/SystemSettings/Syste
 const NotificationSettings = lazy(() => import('../pages/Settings/NotificationSettings/NotificationSettings'));
 
 // Error Pages
-const NotFound = lazy(() => import('../pages/Errors/NotFound/NotFound'));
+const NotFound = lazy(() => import('../pages/Errors/NotFound/notfound'));
 const Unauthorized = lazy(() => import('../pages/Errors/Unauthorized/Unauthorized'));
 
 const AppRouter = () => {

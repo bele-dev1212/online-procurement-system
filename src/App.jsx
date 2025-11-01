@@ -20,7 +20,7 @@ import ForgotPassword from './pages/Auth/ForgotPassword/ForgotPassword';
 import OrganizationRegister from './pages/Auth/OrganizationRegister/OrganizationRegister';
 
 // Import Error Pages
-import NotFound from './pages/Errors/NotFound/NotFound';
+import NotFound from './pages/Errors/NotFound/notfound';
 import Unauthorized from './pages/Errors/Unauthorized/Unauthorized';
 
 // Protected Route Component
