@@ -43,6 +43,14 @@ const UserSettings = lazy(() => import('../pages/Settings/UserSettings/UserSetti
 const SystemSettings = lazy(() => import('../pages/Settings/SystemSettings/SystemSettings'));
 const NotificationSettings = lazy(() => import('../pages/Settings/NotificationSettings/NotificationSettings'));
 
+// SuperAdmin Pages
+const SuperAdminDashboard = lazy(() => import('../pages/SuperAdmin/Dashboard/Dashboard'));
+const newLocal = '../pages/SuperAdmin/Billingmanagment/BillingManagement';
+const BillingManagement = lazy(() => import(newLocal));
+const OrganizationsList = lazy(() => import('../pages/SuperAdmin/OrganazationsList/OrganizationsList'));
+const PlatformAnalytics = lazy(() => import('../pages/SuperAdmin/PlatformAnalytics,/PlatformAnalytics'));
+const SuperAdminSystemSettings = lazy(() => import('../pages/SuperAdmin/SystemSetting/SystemSettings'));
+
 // Error Pages
 const NotFound = lazy(() => import('../pages/Errors/NotFound/notfound'));
 const Unauthorized = lazy(() => import('../pages/Errors/Unauthorized/Unauthorized'));
@@ -222,6 +230,23 @@ const AppRouter = () => {
                   } 
                 />
                 <Route index element={<Navigate to="/settings/profile" replace />} />
+              </Routes>
+            </PrivateRoute>
+          } 
+        />
+
+        {/* SuperAdmin Routes */}
+        <Route 
+          path="/super-admin/*" 
+          element={
+            <PrivateRoute requiredRoles={['super_admin', 'admin']}>
+              <Routes>
+                <Route path="dashboard" element={<SuperAdminDashboard />} />
+                <Route path="billing" element={<BillingManagement />} />
+                <Route path="organizations" element={<OrganizationsList />} />
+                <Route path="analytics" element={<PlatformAnalytics />} />
+                <Route path="settings" element={<SuperAdminSystemSettings />} />
+                <Route index element={<Navigate to="/super-admin/dashboard" replace />} />
               </Routes>
             </PrivateRoute>
           } 
