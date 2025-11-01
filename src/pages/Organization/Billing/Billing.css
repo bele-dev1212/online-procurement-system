@@ -1,0 +1,184 @@
+.billing {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.billing-header {
+  margin-bottom: 2rem;
+}
+
+.billing-header h1 {
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.billing-header p {
+  color: #64748b;
+}
+
+.billing-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.billing-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.billing-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.billing-card h2 {
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.plan-info {
+  margin-bottom: 2rem;
+}
+
+.plan-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.plan-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3b82f6;
+  margin-bottom: 1rem;
+}
+
+.plan-status,
+.next-billing {
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.status.active {
+  color: #166534;
+  font-weight: 600;
+}
+
+.plan-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.payment-method {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.method-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.method-icon {
+  font-size: 1.5rem;
+}
+
+.method-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.method-brand {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.method-expiry {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.default-badge {
+  background: #3b82f6;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.billing-history {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.billing-history h2 {
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+}
+
+.billing-history table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.billing-history th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.billing-history td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+}
+
+.billing-history tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .billing {
+    padding: 1rem;
+  }
+  
+  .billing-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .plan-actions {
+    flex-direction: column;
+  }
+  
+  .billing-history {
+    overflow-x: auto;
+  }
+}
