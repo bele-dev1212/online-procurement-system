@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO & PWA Meta Tags -->
+    <meta name="description" content="Enterprise Procurement Management System - Streamline your procurement process with our advanced management platform">
+    <meta name="keywords" content="procurement, supply chain, purchase orders, inventory management, suppliers">
+    <meta name="author" content="Procurement System">
+    
+    <!-- PWA -->
+    <meta name="theme-color" content="#2563eb"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="manifest" href="/manifest.json"/>
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Performance -->
+    <link rel="dns-prefetch" href="//api.your-backend.com">
+    
+    <title>ProcurementPro - Enterprise Management System</title>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Loading fallback -->
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #f8fafc;">
+        <div style="text-align: center;">
+          <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+          <p style="color: #64748b; font-family: system-ui;">Loading Procurement System...</p>
+        </div>
+      </div>
+    </div>
+    
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </body>
+</html>
