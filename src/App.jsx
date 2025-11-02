@@ -4,27 +4,21 @@ import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/AuthContext';
 import './App.css';
 
-// Import Marketing Pages
+// Import existing pages
 import Home from './pages/Home/Home';
 import About from './pages/About/About';
 import Features from './pages/Features/Features';
 import Pricing from './pages/Pricing/Pricing';
 import Contact from './pages/Contact/Contact';
-
-// Import Auth Pages
 import Login from './pages/Auth/Login/Login';
 import Register from './pages/Auth/Register/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword/ForgotPassword';
-
-// Import Organization Registration
 import OrganizationRegister from './pages/Auth/OrganizationRegister/OrganizationRegister';
-
-// Import Error Pages
 import NotFound from './pages/Errors/NotFound/notfound';
 import Unauthorized from './pages/Errors/Unauthorized/Unauthorized';
 
 // Protected Route Component
-const ProtectedRoute = ({ children, requireAdmin = false }) => {
+const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
@@ -35,12 +29,35 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     return <Navigate to="/login" replace />;
   }
   
-  if (requireAdmin && user.role !== 'super_admin') {
-    return <Navigate to="/unauthorized" replace />;
-  }
-  
   return children;
 };
+
+// Simple Dashboard (temporary)
+const SimpleDashboard = () => (
+  <div style={{ padding: '20px' }}>
+    <h1>Procurement Dashboard</h1>
+    <p>Welcome to your dashboard! Registration was successful.</p>
+    <div style={{ 
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(3, 1fr)', 
+      gap: '20px', 
+      marginTop: '20px' 
+    }}>
+      <div style={{ background: '#f0f8ff', padding: '20px', borderRadius: '8px' }}>
+        <h3>Purchase Requests</h3>
+        <p style={{ fontSize: '24px', fontWeight: 'bold' }}>0</p>
+      </div>
+      <div style={{ background: '#f0fff0', padding: '20px', borderRadius: '8px' }}>
+        <h3>Suppliers</h3>
+        <p style={{ fontSize: '24px', fontWeight: 'bold' }}>0</p>
+      </div>
+      <div style={{ background: '#fff8f0', padding: '20px', borderRadius: '8px' }}>
+        <h3>Open POs</h3>
+        <p style={{ fontSize: '24px', fontWeight: 'bold' }}>0</p>
+      </div>
+    </div>
+  </div>
+);
 
 function App() {
   return (
@@ -61,70 +78,10 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/organization/register" element={<OrganizationRegister />} />
 
-            {/* 🏢 Application Pages (Protected) - Commented out until files exist */}
-            {/* <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/suppliers/*" element={
-              <ProtectedRoute>
-                <Suppliers />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/inventory/*" element={
-              <ProtectedRoute>
-                <Inventory />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/bidding/*" element={
-              <ProtectedRoute>
-                <Bidding />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/reports/*" element={
-              <ProtectedRoute>
-                <Reports />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/settings/*" element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            } /> */}
-
-            {/* ⚙️ Organization Management (Protected) - Commented out until files exist */}
-            {/* <Route path="/organization/settings" element={
-              <ProtectedRoute>
-                <OrganizationSettings />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/organization/team" element={
-              <ProtectedRoute>
-                <TeamManagement />
-              </ProtectedRoute>
-            } /> */}
-            
-            {/* <Route path="/organization/billing" element={
-              <ProtectedRoute>
-                <Billing />
-              </ProtectedRoute>
-            } /> */}
-
-            {/* Temporary dashboard route for testing */}
+            {/* 🏢 Application Pages (Protected) */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
-                <div style={{ padding: '20px' }}>
-                  <h1>Dashboard</h1>
-                  <p>Welcome to your dashboard! This is a temporary page.</p>
-                  <p>Create the actual component files to replace this.</p>
-                </div>
+                <SimpleDashboard />
               </ProtectedRoute>
             } />
 

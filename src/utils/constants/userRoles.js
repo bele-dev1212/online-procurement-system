@@ -5,7 +5,10 @@
 
 // User Role Definitions
 export const USER_ROLES = {
-  // System Administrator - Full system access
+  // Platform Super Administrator - First registered user, platform-wide access
+  SUPER_ADMIN: 'super_admin',
+  
+  // System Administrator - Full system access within organization
   ADMIN: 'admin',
   
   // Procurement Manager - Manages procurement processes
@@ -29,7 +32,10 @@ export const USER_ROLES = {
   // Regular User - Basic system user
   USER: 'user',
   
-  // Supplier User - External supplier access
+  // Supplier - External supplier access (matches spec)
+  SUPPLIER: 'supplier',
+  
+  // Supplier User - External supplier access (alias)
   SUPPLIER_USER: 'supplier_user',
   
   // Read-only User - View-only access
@@ -485,6 +491,7 @@ export const ROLE_DESCRIPTIONS = {
   [USER_ROLES.FINANCE_MANAGER]: 'Handles financial approvals, budget management, and cost analysis. Approves high-value procurement transactions.',
   [USER_ROLES.DEPARTMENT_MANAGER]: 'Department-level approvals and procurement initiation. Manages department-specific procurement needs.',
   [USER_ROLES.USER]: 'Basic system user. Can create requisitions and purchase orders, view inventory, and access personal dashboard.',
+  [USER_ROLES.SUPPLIER]: 'External supplier access. Can view relevant bids and submit responses. Limited system access.',
   [USER_ROLES.SUPPLIER_USER]: 'External supplier access. Can view relevant bids and submit responses. Limited system access.',
   [USER_ROLES.VIEWER]: 'Read-only access to view procurement data, reports, and analytics. Cannot make changes.',
   [USER_ROLES.AUDITOR]: 'Access to audit trails, reports, and system logs for compliance and auditing purposes.',

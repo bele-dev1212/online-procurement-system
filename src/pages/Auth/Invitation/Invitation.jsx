@@ -18,23 +18,33 @@ const Invitation = () => {
     // Fetch invitation details
     const fetchInvitation = async () => {
       try {
-        // Simulate API call
-        setTimeout(() => {
+        const response = await fetch(`/api/invitations/${token}`);
+        const result = await response.json();
+        
+        if (result.success && result.data?.invitation) {
           setInvitation({
-            organization: 'ABC Corporation',
-            inviter: 'John Doe',
-            role: 'Procurement Manager',
-            email: 'newuser@abccorp.com'
+            organization: result.data.invitation.organization.name,
+            inviter: result.data.invitation.inviter.name,
+            role: result.data.invitation.role,
+            email: result.data.invitation.email
           });
-          setLoading(false);
-        }, 1000);
+        } else {
+          setInvitation(null);
+        }
       } catch (error) {
         console.error('Error fetching invitation:', error);
+        setInvitation(null);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchInvitation();
+    if (token) {
+      fetchInvitation();
+    } else {
+      setLoading(false);
+      setInvitation(null);
+    }
   }, [token]);
 
   const handleSubmit = async (e) => {
@@ -45,12 +55,37 @@ const Invitation = () => {
     }
 
     // Handle invitation acceptance
+    setLoading(true);
     try {
-      // API call to accept invitation
-      console.log('Accepting invitation:', formData);
-      navigate('/dashboard');
+      const response = await fetch(`/api/invitations/${token}/accept`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          password: formData.password
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data?.token) {
+        // Store token and user data
+        localStorage.setItem('procurement_access_token', result.data.token);
+        localStorage.setItem('userData', JSON.stringify(result.data.user));
+        
+        // Redirect to dashboard
+        navigate('/dashboard', { replace: true });
+      } else {
+        alert(result.message || 'Failed to accept invitation');
+      }
     } catch (error) {
       console.error('Error accepting invitation:', error);
+      alert('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

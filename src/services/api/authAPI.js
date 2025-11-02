@@ -1,8 +1,11 @@
 import { tokenService } from '../auth/tokenService';
-import API_CONFIG from '../../utils/config/apiConfig'; // Changed import
 
-// Use direct URL from the config
-const API_BASE_URL = API_CONFIG.BASE_URLS.DEVELOPMENT; // Changed to use DEVELOPMENT URL
+// Use relative URLs to leverage the proxy in package.json
+// The proxy forwards /api/* requests to http://localhost:5000/api/*
+// For production, use absolute URLs from API_CONFIG
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '' // Will be set from API_CONFIG if needed
+  : '/api'; // Use /api prefix to leverage proxy in development
 
 const handleResponse = async (response) => {
   if (!response.ok) {
