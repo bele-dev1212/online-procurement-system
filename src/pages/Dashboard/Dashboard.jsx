@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { dashboardAPI } from '../../services/api/dashboardAPI';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -13,212 +15,41 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('monthly');
- 
-
-  // Mock data - replace with actual API calls
-  const mockDashboardData = {
-    overview: {
-      totalSpend: 5850000,
-      totalOrders: 245,
-      activeSuppliers: 42,
-      costSavings: 875000,
-      pendingApprovals: 12,
-      stockAlerts: 8,
-      complianceRate: 94.5,
-      spendChange: 12.5,
-      ordersChange: 8.3,
-      savingsChange: 15.7
-    },
-    recentActivities: [
-      {
-        id: 1,
-        type: 'purchase_order',
-        title: 'Purchase Order Approved',
-        description: 'PO #PO-2024-156 has been approved and sent to supplier',
-        timestamp: new Date('2024-01-15T14:30:00Z'),
-        user: 'John Smith',
-        status: 'completed'
-      },
-      {
-        id: 2,
-        type: 'stock_alert',
-        title: 'Low Stock Alert',
-        description: 'Laptop Dell XPS 13 is running low. Current stock: 2 units',
-        timestamp: new Date('2024-01-15T10:15:00Z'),
-        user: 'System',
-        status: 'warning'
-      },
-      {
-        id: 3,
-        type: 'supplier',
-        title: 'New Supplier Registered',
-        description: 'TechCorp Inc. has completed registration process',
-        timestamp: new Date('2024-01-14T16:45:00Z'),
-        user: 'Sarah Johnson',
-        status: 'completed'
-      },
-      {
-        id: 4,
-        type: 'bidding',
-        title: 'Bid Submission Reminder',
-        description: 'RFQ #RFQ-2024-003 closes in 24 hours',
-        timestamp: new Date('2024-01-14T09:20:00Z'),
-        user: 'System',
-        status: 'info'
-      },
-      {
-        id: 5,
-        type: 'approval',
-        title: 'Approval Required',
-        description: 'Requisition #REQ-2024-045 requires your approval',
-        timestamp: new Date('2024-01-13T14:15:00Z'),
-        user: 'Mike Chen',
-        status: 'pending'
-      }
-    ],
-    quickStats: {
-      pendingRequisitions: 8,
-      openRFQs: 12,
-      activeBids: 18,
-      overdueDeliveries: 3,
-      supplierEvaluations: 5,
-      contractRenewals: 7
-    },
-    procurementMetrics: {
-      avgProcessingTime: 2.4,
-      approvalRate: 94.5,
-      complianceRate: 96.2,
-      supplierDiversity: 28.3,
-      costAvoidance: 425000,
-      cycleTime: 3.2
-    },
-    supplierPerformance: [
-      {
-        id: 'SUPP-001',
-        name: 'TechCorp Inc.',
-        rating: 4.8,
-        delivery: 98.2,
-        quality: 95.5,
-        compliance: 96.8,
-        spend: 1250000,
-        trend: 'up'
-      },
-      {
-        id: 'SUPP-002',
-        name: 'OfficeWorld Ltd',
-        rating: 4.6,
-        delivery: 95.4,
-        quality: 92.8,
-        compliance: 94.2,
-        spend: 875000,
-        trend: 'stable'
-      },
-      {
-        id: 'SUPP-006',
-        name: 'NetTech Solutions',
-        rating: 4.7,
-        delivery: 97.8,
-        quality: 96.9,
-        compliance: 98.1,
-        spend: 1345000,
-        trend: 'up'
-      },
-      {
-        id: 'SUPP-004',
-        name: 'SoftSolutions Corp',
-        rating: 4.4,
-        delivery: 92.1,
-        quality: 94.7,
-        compliance: 97.3,
-        spend: 956000,
-        trend: 'stable'
-      }
-    ],
-    stockAlerts: [
-      {
-        id: 1,
-        product: 'Laptop Dell XPS 13',
-        sku: 'DLXPS13-001',
-        currentStock: 2,
-        minStock: 5,
-        status: 'critical'
-      },
-      {
-        id: 2,
-        product: 'Office Chair Ergonomic',
-        sku: 'OFCHR-ERG-002',
-        currentStock: 0,
-        minStock: 3,
-        status: 'out_of_stock'
-      },
-      {
-        id: 3,
-        product: 'Wireless Mouse',
-        sku: 'WLMS-003',
-        currentStock: 8,
-        minStock: 10,
-        status: 'low'
-      },
-      {
-        id: 4,
-        product: 'A4 Printer Paper',
-        sku: 'PAP-A4-500',
-        currentStock: 15,
-        minStock: 20,
-        status: 'warning'
-      }
-    ],
-    pendingApprovals: [
-      {
-        id: 1,
-        type: 'purchase_order',
-        reference: 'PO-2024-156',
-        amount: 125000,
-        requester: 'Mike Chen',
-        department: 'Operations',
-        daysPending: 1,
-        priority: 'high'
-      },
-      {
-        id: 2,
-        type: 'requisition',
-        reference: 'REQ-2024-045',
-        amount: 45000,
-        requester: 'Sarah Johnson',
-        department: 'Marketing',
-        daysPending: 2,
-        priority: 'medium'
-      },
-      {
-        id: 3,
-        type: 'contract',
-        reference: 'CONT-2024-023',
-        amount: 285000,
-        requester: 'Robert Wilson',
-        department: 'IT',
-        daysPending: 3,
-        priority: 'high'
-      }
-    ]
-  };
-
-  useEffect(() => {
-    loadDashboardData();
-  }, [timeRange]);
 
   const loadDashboardData = async () => {
     setLoading(true);
+    setError('');
     try {
-      // Simulate API call
-      // const response = await dashboardAPI.getDashboardData(timeRange);
-      // setDashboardData(response.data);
+      const response = await dashboardAPI.getDashboardData(timeRange, userRole);
       
-      setTimeout(() => {
-        setDashboardData(mockDashboardData);
-        setLoading(false);
-      }, 1500);
+      if (response.success && response.data) {
+        setDashboardData(response.data);
+      } else {
+        setError(response.message || 'Failed to load dashboard data');
+        // Set empty data structure if API fails
+        setDashboardData({
+          overview: {},
+          recentActivities: [],
+          quickStats: {},
+          procurementMetrics: {},
+          supplierPerformance: [],
+          stockAlerts: [],
+          pendingApprovals: []
+        });
+      }
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      setError(error.message || 'Failed to load dashboard data');
+      setDashboardData({
+        overview: {},
+        recentActivities: [],
+        quickStats: {},
+        procurementMetrics: {},
+        supplierPerformance: [],
+        stockAlerts: [],
+        pendingApprovals: []
+      });
+    } finally {
       setLoading(false);
     }
   };
@@ -356,10 +187,13 @@ const Dashboard = () => {
           <div className="metric-icon">💰</div>
           <div className="metric-content">
             <h3>Total Spend</h3>
-            <div className="metric-value">{formatCurrency(dashboardData.overview.totalSpend)}</div>
-            <div className={`metric-trend ${getTrendClass(dashboardData.overview.spendChange)}`}>
-              <span className="trend-icon">{getTrendIcon(dashboardData.overview.spendChange)}</span>
-              <span className="trend-value">{Math.abs(dashboardData.overview.spendChange)}%</span>
+              <div className="metric-value">{formatCurrency(dashboardData.overview?.totalSpend || 0)}</div>
+              {dashboardData.overview?.spendChange !== undefined && (
+                <div className={`metric-trend ${getTrendClass(dashboardData.overview.spendChange)}`}>
+                  <span className="trend-icon">{getTrendIcon(dashboardData.overview.spendChange)}</span>
+                  <span className="trend-value">{Math.abs(dashboardData.overview.spendChange)}%</span>
+                </div>
+              )}
               <span className="trend-label">vs last period</span>
             </div>
           </div>
@@ -369,10 +203,13 @@ const Dashboard = () => {
           <div className="metric-icon">📦</div>
           <div className="metric-content">
             <h3>Total Orders</h3>
-            <div className="metric-value">{formatNumber(dashboardData.overview.totalOrders)}</div>
-            <div className={`metric-trend ${getTrendClass(dashboardData.overview.ordersChange)}`}>
-              <span className="trend-icon">{getTrendIcon(dashboardData.overview.ordersChange)}</span>
-              <span className="trend-value">{Math.abs(dashboardData.overview.ordersChange)}%</span>
+              <div className="metric-value">{formatNumber(dashboardData.overview?.totalOrders || 0)}</div>
+              {dashboardData.overview?.ordersChange !== undefined && (
+                <div className={`metric-trend ${getTrendClass(dashboardData.overview.ordersChange)}`}>
+                  <span className="trend-icon">{getTrendIcon(dashboardData.overview.ordersChange)}</span>
+                  <span className="trend-value">{Math.abs(dashboardData.overview.ordersChange)}%</span>
+                </div>
+              )}
               <span className="trend-label">vs last period</span>
             </div>
           </div>
@@ -382,10 +219,13 @@ const Dashboard = () => {
           <div className="metric-icon">💸</div>
           <div className="metric-content">
             <h3>Cost Savings</h3>
-            <div className="metric-value">{formatCurrency(dashboardData.overview.costSavings)}</div>
-            <div className={`metric-trend ${getTrendClass(dashboardData.overview.savingsChange)}`}>
-              <span className="trend-icon">{getTrendIcon(dashboardData.overview.savingsChange)}</span>
-              <span className="trend-value">{Math.abs(dashboardData.overview.savingsChange)}%</span>
+              <div className="metric-value">{formatCurrency(dashboardData.overview?.costSavings || 0)}</div>
+              {dashboardData.overview?.savingsChange !== undefined && (
+                <div className={`metric-trend ${getTrendClass(dashboardData.overview.savingsChange)}`}>
+                  <span className="trend-icon">{getTrendIcon(dashboardData.overview.savingsChange)}</span>
+                  <span className="trend-value">{Math.abs(dashboardData.overview.savingsChange)}%</span>
+                </div>
+              )}
               <span className="trend-label">vs last period</span>
             </div>
           </div>
@@ -395,7 +235,7 @@ const Dashboard = () => {
           <div className="metric-icon">🏢</div>
           <div className="metric-content">
             <h3>Active Suppliers</h3>
-            <div className="metric-value">{formatNumber(dashboardData.overview.activeSuppliers)}</div>
+            <div className="metric-value">{formatNumber(dashboardData.overview?.activeSuppliers || 0)}</div>
             <div className="metric-subtitle">Managing relationships</div>
           </div>
         </div>
@@ -404,7 +244,7 @@ const Dashboard = () => {
           <div className="metric-icon">✅</div>
           <div className="metric-content">
             <h3>Compliance Rate</h3>
-            <div className="metric-value">{dashboardData.overview.complianceRate}%</div>
+            <div className="metric-value">{dashboardData.overview?.complianceRate || 0}%</div>
             <div className="metric-subtitle">Policy adherence</div>
           </div>
         </div>
@@ -413,7 +253,7 @@ const Dashboard = () => {
           <div className="metric-icon">⏳</div>
           <div className="metric-content">
             <h3>Pending Approvals</h3>
-            <div className="metric-value">{dashboardData.overview.pendingApprovals}</div>
+            <div className="metric-value">{dashboardData.overview?.pendingApprovals || 0}</div>
             <div className="metric-subtitle">Require attention</div>
           </div>
         </div>
@@ -490,7 +330,8 @@ const Dashboard = () => {
             </div>
             <div className="card-content">
               <div className="activities-list">
-                {dashboardData.recentActivities.map(activity => (
+                {dashboardData.recentActivities && dashboardData.recentActivities.length > 0 ? (
+                  dashboardData.recentActivities.map(activity => (
                   <div key={activity.id} className="activity-item">
                     <div className="activity-icon">
                       {getActivityIcon(activity.type)}
@@ -509,7 +350,12 @@ const Dashboard = () => {
                       {getStatusIcon(activity.status)}
                     </div>
                   </div>
-                ))}
+                ))
+                ) : (
+                  <div className="empty-state">
+                    <p>No recent activities</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -518,11 +364,12 @@ const Dashboard = () => {
           <div className="dashboard-card">
             <div className="card-header">
               <h2>Stock Alerts</h2>
-              <span className="card-badge danger">{dashboardData.stockAlerts.length}</span>
+              <span className="card-badge danger">{dashboardData.stockAlerts?.length || 0}</span>
             </div>
             <div className="card-content">
               <div className="alerts-list">
-                {dashboardData.stockAlerts.map(alert => (
+                {dashboardData.stockAlerts && dashboardData.stockAlerts.length > 0 ? (
+                  dashboardData.stockAlerts.map(alert => (
                   <div key={alert.id} className="alert-item">
                     <div className="alert-icon">
                       {getStatusIcon(alert.status)}
@@ -553,11 +400,12 @@ const Dashboard = () => {
           <div className="dashboard-card">
             <div className="card-header">
               <h2>Pending Approvals</h2>
-              <span className="card-badge warning">{dashboardData.pendingApprovals.length}</span>
+              <span className="card-badge warning">{dashboardData.pendingApprovals?.length || 0}</span>
             </div>
             <div className="card-content">
               <div className="approvals-list">
-                {dashboardData.pendingApprovals.map(approval => (
+                {dashboardData.pendingApprovals && dashboardData.pendingApprovals.length > 0 ? (
+                  dashboardData.pendingApprovals.map(approval => (
                   <div key={approval.id} className="approval-item">
                     <div className="approval-type">
                       {getActivityIcon(approval.type)}
@@ -576,7 +424,12 @@ const Dashboard = () => {
                       </button>
                     </div>
                   </div>
-                ))}
+                  ))
+                ) : (
+                  <div className="empty-state">
+                    <p>No pending approvals</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -594,7 +447,8 @@ const Dashboard = () => {
             </div>
             <div className="card-content">
               <div className="suppliers-list">
-                {dashboardData.supplierPerformance.map(supplier => (
+                {dashboardData.supplierPerformance && dashboardData.supplierPerformance.length > 0 ? (
+                  dashboardData.supplierPerformance.map(supplier => (
                   <div key={supplier.id} className="supplier-item">
                     <div className="supplier-avatar">
                       {supplier.name.charAt(0)}
@@ -637,7 +491,7 @@ const Dashboard = () => {
               <div className="metrics-grid">
                 <div className="metric-item">
                   <div className="metric-label">Avg Processing Time</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.avgProcessingTime} days</div>
+                  <div className="metric-value">{dashboardData.procurementMetrics?.avgProcessingTime || 0} days</div>
                   <div className="metric-progress">
                     <div 
                       className="progress-bar"
@@ -648,40 +502,40 @@ const Dashboard = () => {
 
                 <div className="metric-item">
                   <div className="metric-label">Approval Rate</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.approvalRate}%</div>
+                  <div className="metric-value">{dashboardData.procurementMetrics?.approvalRate || 0}%</div>
                   <div className="metric-progress">
                     <div 
                       className="progress-bar"
-                      style={{ width: `${dashboardData.procurementMetrics.approvalRate}%` }}
+                      style={{ width: `${dashboardData.procurementMetrics?.approvalRate || 0}%` }}
                     ></div>
                   </div>
                 </div>
 
                 <div className="metric-item">
                   <div className="metric-label">Compliance Rate</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.complianceRate}%</div>
+                  <div className="metric-value">{dashboardData.procurementMetrics?.complianceRate || 0}%</div>
                   <div className="metric-progress">
                     <div 
                       className="progress-bar"
-                      style={{ width: `${dashboardData.procurementMetrics.complianceRate}%` }}
+                      style={{ width: `${dashboardData.procurementMetrics?.complianceRate || 0}%` }}
                     ></div>
                   </div>
                 </div>
 
                 <div className="metric-item">
                   <div className="metric-label">Supplier Diversity</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.supplierDiversity}%</div>
+                  <div className="metric-value">{dashboardData.procurementMetrics?.supplierDiversity || 0}%</div>
                   <div className="metric-progress">
                     <div 
                       className="progress-bar"
-                      style={{ width: `${dashboardData.procurementMetrics.supplierDiversity}%` }}
+                      style={{ width: `${dashboardData.procurementMetrics?.supplierDiversity || 0}%` }}
                     ></div>
                   </div>
                 </div>
 
                 <div className="metric-item">
                   <div className="metric-label">Cost Avoidance</div>
-                  <div className="metric-value">{formatCurrency(dashboardData.procurementMetrics.costAvoidance)}</div>
+                  <div className="metric-value">{formatCurrency(dashboardData.procurementMetrics?.costAvoidance || 0)}</div>
                   <div className="metric-progress">
                     <div 
                       className="progress-bar"
@@ -692,7 +546,7 @@ const Dashboard = () => {
 
                 <div className="metric-item">
                   <div className="metric-label">Cycle Time</div>
-                  <div className="metric-value">{dashboardData.procurementMetrics.cycleTime} days</div>
+                  <div className="metric-value">{dashboardData.procurementMetrics?.cycleTime || 0} days</div>
                   <div className="metric-progress">
                     <div 
                       className="progress-bar"
@@ -715,7 +569,7 @@ const Dashboard = () => {
                 <div className="stat-item">
                   <div className="stat-icon">📝</div>
                   <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.pendingRequisitions}</div>
+                    <div className="stat-value">{dashboardData.quickStats?.pendingRequisitions || 0}</div>
                     <div className="stat-label">Pending Requisitions</div>
                   </div>
                 </div>
@@ -723,7 +577,7 @@ const Dashboard = () => {
                 <div className="stat-item">
                   <div className="stat-icon">💰</div>
                   <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.openRFQs}</div>
+                    <div className="stat-value">{dashboardData.quickStats?.openRFQs || 0}</div>
                     <div className="stat-label">Open RFQs</div>
                   </div>
                 </div>
@@ -731,7 +585,7 @@ const Dashboard = () => {
                 <div className="stat-item">
                   <div className="stat-icon">⚖️</div>
                   <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.activeBids}</div>
+                    <div className="stat-value">{dashboardData.quickStats?.activeBids || 0}</div>
                     <div className="stat-label">Active Bids</div>
                   </div>
                 </div>
@@ -739,7 +593,7 @@ const Dashboard = () => {
                 <div className="stat-item">
                   <div className="stat-icon">🚨</div>
                   <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.overdueDeliveries}</div>
+                    <div className="stat-value">{dashboardData.quickStats?.overdueDeliveries || 0}</div>
                     <div className="stat-label">Overdue Deliveries</div>
                   </div>
                 </div>
@@ -747,7 +601,7 @@ const Dashboard = () => {
                 <div className="stat-item">
                   <div className="stat-icon">📊</div>
                   <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.supplierEvaluations}</div>
+                    <div className="stat-value">{dashboardData.quickStats?.supplierEvaluations || 0}</div>
                     <div className="stat-label">Supplier Evaluations</div>
                   </div>
                 </div>
@@ -755,7 +609,7 @@ const Dashboard = () => {
                 <div className="stat-item">
                   <div className="stat-icon">📄</div>
                   <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats.contractRenewals}</div>
+                    <div className="stat-value">{dashboardData.quickStats?.contractRenewals || 0}</div>
                     <div className="stat-label">Contract Renewals</div>
                   </div>
                 </div>
