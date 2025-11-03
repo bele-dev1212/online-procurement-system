@@ -1,0 +1,407 @@
+.rfq-opportunities {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rfq-opportunities-header {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.rfq-opportunities-header h1 {
+  color: #1f2937;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rfq-filters {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 200px;
+}
+
+.filter-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+}
+
+.rfq-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.rfq-list {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.rfq-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.rfq-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+}
+
+.rfq-card-header {
+  display: flex;
+  justify-content: between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.rfq-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 5px 0;
+  flex: 1;
+}
+
+.rfq-id {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.rfq-meta {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.meta-item strong {
+  color: #374151;
+}
+
+.rfq-description {
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.rfq-card-footer {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.rfq-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.btn-outline:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-open {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-closed {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-draft {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-awarded {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-cancelled {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.items-per-page-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.items-per-page-selector select {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.empty-state h3 {
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .rfq-opportunities {
+    padding: 15px;
+  }
+
+  .rfq-opportunities-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rfq-filters {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .rfq-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rfq-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rfq-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rfq-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .rfq-meta {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Animation for new RFQs */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rfq-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Priority indicators */
+.priority-high {
+  border-left: 4px solid #ef4444;
+}
+
+.priority-medium {
+  border-left: 4px solid #f59e0b;
+}
+
+.priority-low {
+  border-left: 4px solid #10b981;
+}
+
+/* Deadline warning */
+.deadline-urgent {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.deadline-warning {
+  background: #fffbeb;
+  border-color: #fed7aa;
+}

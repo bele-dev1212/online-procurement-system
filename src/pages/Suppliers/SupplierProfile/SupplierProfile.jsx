@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useSuppliers } from '../../../../hooks/useSuppliers';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { formatCurrency, formatDate } from '../../../../utils/helpers/formatters';
-import { supplierStatus } from '../../../../utils/enums/supplierStatus';
+import { useSuppliers } from '../../../hooks/useSuppliers';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { AddressFormatters, CurrencyFormatters, DataFormatters, NumberFormatters, TextFormatters } from '../../../utils/helpers/formatters';
+import { SUPPLIER_PERFORMANCE_LABELS, SUPPLIER_PERFORMANCE_RATING, SUPPLIER_RISK_COLORS, SUPPLIER_RISK_LEVEL, SUPPLIER_STATUS, SUPPLIER_STATUS_CATEGORY, SUPPLIER_STATUS_COLORS, SUPPLIER_STATUS_DESCRIPTIONS, SUPPLIER_STATUS_DISPLAY, SUPPLIER_STATUS_ICONS, SUPPLIER_STATUS_TRANSITIONS, SupplierStatusUtils } from '../../../utils/enums/supplierStatus';
 import './SupplierProfile.css';
 
 const SupplierProfile = () => {

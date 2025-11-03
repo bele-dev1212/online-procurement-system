@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/AuthContext';
+import Sidebar from './components/common/Sidebar/Sidebar';
 import './App.css';
 
 // Import existing pages
@@ -17,9 +18,32 @@ import OrganizationRegister from './pages/Auth/OrganizationRegister/Organization
 import NotFound from './pages/Errors/NotFound/notfound';
 import Unauthorized from './pages/Errors/Unauthorized/Unauthorized';
 
+// Import Supplier Pages
+import SupplierDashboard from './pages/Suppliers/SupplierDashboard/SupplierDashboard';
+import SupplierDirectory from './pages/Suppliers/SupplierDirectory/SupplierDirectory';
+import AddSupplier from './pages/Suppliers/AddSupplier/AddSupplier';
+import SupplierProfile from './pages/Suppliers/SupplierProfile/SupplierProfile';
+import SupplierPerformance from './pages/Suppliers/SupplierPerformance/SupplierPerformance';
+import RFQOpportunities from './pages/Suppliers/RFQOpportunities/RFQOpportunities';
+import BidManagement from './pages/Suppliers/BidManagement/BidManagement';
+import OrderFulfillment from './pages/Suppliers/OrderFulfillment/OrderFulfillment';
+import ProductCatalog from './pages/Suppliers/ProductCatalog/ProductCatalog';
+
+// Layout Component with Sidebar
+const AppLayout = ({ children }) => {
+  return (
+    <div className="app-layout">
+      <Sidebar />
+      <main className="main-content">
+        {children}
+      </main>
+    </div>
+  );
+};
+
 // Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children, requiredRole = null }) => {
+  const { user, loading, hasRole } = useAuth();
   
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -28,8 +52,12 @@ const ProtectedRoute = ({ children }) => {
   if (!user) {
     return <Navigate to="/login" replace />;
   }
+
+  if (requiredRole && !hasRole(requiredRole)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
   
-  return children;
+  return <AppLayout>{children}</AppLayout>;
 };
 
 // Simple Dashboard (temporary)
@@ -82,6 +110,65 @@ function App() {
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <SimpleDashboard />
+              </ProtectedRoute>
+            } />
+
+            {/* 👥 SUPPLIER MANAGEMENT ROUTES (Admin/Procurement Manager) */}
+            <Route path="/suppliers" element={
+              <ProtectedRoute requiredRole="admin">
+                <SupplierDirectory />
+              </ProtectedRoute>
+            } />
+            <Route path="/suppliers/directory" element={
+              <ProtectedRoute requiredRole="admin">
+                <SupplierDirectory />
+              </ProtectedRoute>
+            } />
+            <Route path="/suppliers/create" element={
+              <ProtectedRoute requiredRole="admin">
+                <AddSupplier />
+              </ProtectedRoute>
+            } />
+            <Route path="/suppliers/performance" element={
+              <ProtectedRoute requiredRole="admin">
+                <SupplierPerformance />
+              </ProtectedRoute>
+            } />
+            <Route path="/suppliers/profile/:id" element={
+              <ProtectedRoute requiredRole="admin">
+                <SupplierProfile />
+              </ProtectedRoute>
+            } />
+
+            {/* 🏪 SUPPLIER PORTAL ROUTES (Supplier Role) */}
+            <Route path="/supplier/dashboard" element={
+              <ProtectedRoute requiredRole="supplier">
+                <SupplierDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplier/rfq-opportunities" element={
+              <ProtectedRoute requiredRole="supplier">
+                <RFQOpportunities />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplier/bid-management" element={
+              <ProtectedRoute requiredRole="supplier">
+                <BidManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplier/order-fulfillment" element={
+              <ProtectedRoute requiredRole="supplier">
+                <OrderFulfillment />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplier/product-catalog" element={
+              <ProtectedRoute requiredRole="supplier">
+                <ProductCatalog />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplier/profile" element={
+              <ProtectedRoute requiredRole="supplier">
+                <SupplierProfile />
               </ProtectedRoute>
             } />
 

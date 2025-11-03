@@ -10,7 +10,7 @@ const Home = () => {
         <div className="nav-container">
           <Link to="/" className="nav-logo">
             <div className="logo-icon">⚡🏢</div>
-            <span className="logo-text">ፈጣን ግዢ</span>
+            <span className="logo-text">Procur Ethiopia</span>
             <span className="logo-subtitle">Fetan Gizi</span>
           </Link>
           
@@ -38,7 +38,7 @@ const Home = () => {
             
             <h1 className="hero-title">
               Modern Procurement
-              <span className="title-accent"> for Ethiopian Businesses</span>
+              <span className="title-accent"> And Supplier management System</span>
             </h1>
             
             <p className="hero-description">
@@ -52,9 +52,7 @@ const Home = () => {
                 Start Free Trial
                 <span>14 days • No credit card</span>
               </Link>
-              <Link to="/contact" className="btn-hero-secondary">
-                Watch Demo
-              </Link>
+             
             </div>
 
             <div className="hero-stats">
@@ -72,24 +70,12 @@ const Home = () => {
               </div>
             </div>
           </div>
-          
-          <div className="hero-visual">
-            <div className="dashboard-preview">
-              <div className="preview-header">
-                <div className="preview-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-              <div className="preview-content">
-                <div className="preview-card"></div>
-                <div className="preview-card"></div>
-                <div className="preview-card"></div>
-                <div className="preview-chart"></div>
-              </div>
-            </div>
-          </div>
+<div className="hero-images">
+  <img src="https://kissflow.com/hubfs/manual_procurement_risks_blog.jpg" alt="Problem Solution" />
+    <img src="https://media.istockphoto.com/id/2183482739/photo/procurement-management-and-supply-chain-concept-procurement-icons-related-to-logistics-supply.jpg?s=1024x1024&w=is&k=20&c=LMdOmFJEmEbmq_V77WpGg-gY7CLI-DS0nv-iJHCYPXk=" alt="Procurement System" />
+    
+  </div>
+
         </div>
       </section>
 
@@ -159,7 +145,7 @@ const Home = () => {
       <section className="cta">
         <div className="container">
           <h2>Ready to Transform Your Procurement?</h2>
-          <p>Join Ethiopian businesses that trust ፈጣን ግዢ for their procurement operations.</p>
+          <p>Join Ethiopian businesses that trust Procur Ethiopia for their procurement operations.</p>
           <div className="cta-actions">
             <Link to="/register" className="btn-primary btn-large">
               Start Free Trial
@@ -177,8 +163,8 @@ const Home = () => {
           <div className="footer-content">
             <div className="footer-brand">
               <div className="logo-icon">⚡🏢</div>
-              <span className="logo-text">ፈጣን ግዢ</span>
-              <p>Modern procurement for Ethiopian businesses</p>
+              <span className="logo-text">Procur Ethiopia</span>
+              <p>Online Procurement and Suplier management System</p>
             </div>
             
             <div className="footer-links">
@@ -206,7 +192,7 @@ const Home = () => {
           </div>
           
           <div className="footer-bottom">
-            <p>&copy; 2024 ፈጣን ግዢ. All rights reserved.</p>
+            <p>&copy; 2024 Procur Ethiopia. All rights reserved.</p>
           </div>
         </div>
       </footer>

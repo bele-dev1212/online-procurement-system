@@ -5,6 +5,7 @@ import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpi
 import Modal from '../../../components/common/Modal/Modal';
 import SearchBar from '../../../components/common/SearchBar/SearchBar';
 import BidStatusBadge from '../../../components/bidding/BidStatusBadge/BidStatusBadge';
+import { suppliersAPI } from '../../../services/api/suppliersAPI';
 import './BidManagement.css';
 
 const BidManagement = () => {

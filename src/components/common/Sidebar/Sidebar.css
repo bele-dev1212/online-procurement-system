@@ -283,7 +283,60 @@
   text-align: center;
   animation: pulse 2s infinite;
 }
+/* Add to your existing Sidebar.css */
 
+.sidebar.loading {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.collapsed-action-btn.logout {
+  margin-top: auto;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.collapsed-action-btn.logout:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }

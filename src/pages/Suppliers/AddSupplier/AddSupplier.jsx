@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useSuppliers } from '../../../../hooks/useSuppliers';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { supplierStatus, supplierCategories, paymentTerms } from '../../../../utils/enums/supplierStatus';
+
+import { useSuppliers } from '../../../hooks/useSuppliers';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { SUPPLIER_CATEGORIES, SUPPLIER_CATEGORY_LABELS } from '../../../utils/enums/supplierCategories';
 import './AddSupplier.css';
 
 const AddSupplier = () => {

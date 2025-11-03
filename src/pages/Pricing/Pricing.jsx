@@ -58,6 +58,28 @@ const Pricing = () => {
 
   return (
     <div className="pricing">
+      {/* Navigation Header */}
+      <header className="pricing-nav-header">
+        <div className="nav-container">
+          <div className="nav-brand">
+            <Link to="/" className="brand-logo">
+              <span className="logo-icon">⚡</span>
+              ProcureEthiopia
+            </Link>
+          </div>
+          <nav className="nav-links">
+            <Link to="/features" className="nav-link">Features</Link>
+            <Link to="/pricing" className="nav-link active">Pricing</Link>
+            <Link to="/about" className="nav-link">About</Link>
+            <Link to="/contact" className="nav-link">Contact</Link>
+          </nav>
+          <div className="nav-actions">
+            <Link to="/login" className="btn btn-outline">Login</Link>
+            <Link to="/register" className="btn btn-primary">Get Started</Link>
+          </div>
+        </div>
+      </header>
+
       <div className="container">
         <div className="pricing-header">
           <h1>Simple, Transparent Pricing</h1>
@@ -80,7 +102,10 @@ const Pricing = () => {
 
               <ul className="features-list">
                 {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex}>✓ {feature}</li>
+                  <li key={featureIndex}>
+                    <span className="feature-icon">✓</span>
+                    {feature}
+                  </li>
                 ))}
               </ul>
 
@@ -99,17 +124,19 @@ const Pricing = () => {
         <div className="pricing-footer">
           <div className="faq">
             <h3>Frequently Asked Questions</h3>
-            <div className="faq-item">
-              <strong>Can I change plans later?</strong>
-              <p>Yes, you can upgrade or downgrade your plan at any time.</p>
-            </div>
-            <div className="faq-item">
-              <strong>Is there a setup fee?</strong>
-              <p>No, there are no setup fees. You only pay the monthly subscription.</p>
-            </div>
-            <div className="faq-item">
-              <strong>Do you offer discounts for annual payments?</strong>
-              <p>Yes, we offer 15% discount for annual subscriptions.</p>
+            <div className="faq-grid">
+              <div className="faq-item">
+                <strong>Can I change plans later?</strong>
+                <p>Yes, you can upgrade or downgrade your plan at any time.</p>
+              </div>
+              <div className="faq-item">
+                <strong>Is there a setup fee?</strong>
+                <p>No, there are no setup fees. You only pay the monthly subscription.</p>
+              </div>
+              <div className="faq-item">
+                <strong>Do you offer discounts for annual payments?</strong>
+                <p>Yes, we offer 15% discount for annual subscriptions.</p>
+              </div>
             </div>
           </div>
         </div>

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
 import './Sidebar.css';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, loading, hasRole, logout } = useAuth();
+  
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState('');
-  const [user, setUser] = useState(null);
   const [quickStats, setQuickStats] = useState({
     pendingOrders: 0,
     activeSuppliers: 0,
@@ -15,111 +17,300 @@ const Sidebar = () => {
     pendingBids: 0
   });
 
-  // Mock user data
+  // Fetch real quick stats from API
   useEffect(() => {
-    const userData = {
-      name: 'John Doe',
-      role: 'Procurement Manager',
-      department: 'Procurement',
-      avatar: '/assets/images/avatars/user1.jpg'
+    const fetchQuickStats = async () => {
+      try {
+        // TODO: Replace with actual API calls
+        // const stats = await dashboardAPI.getQuickStats();
+        const mockStats = {
+          pendingOrders: 12,
+          activeSuppliers: 45,
+          lowStock: 8,
+          pendingBids: 5
+        };
+        setQuickStats(mockStats);
+      } catch (error) {
+        console.error('Failed to fetch quick stats:', error);
+      }
     };
-    setUser(userData);
-  }, []);
 
-  // Mock quick stats
-  useEffect(() => {
-    const stats = {
-      pendingOrders: 12,
-      activeSuppliers: 45,
-      lowStock: 8,
-      pendingBids: 5
-    };
-    setQuickStats(stats);
-  }, []);
+    if (user) {
+      fetchQuickStats();
+    }
+  }, [user]);
 
-  const menuItems = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: '📊',
-      path: '/dashboard',
-      badge: null
-    },
-    {
-      id: 'procurement',
-      label: 'Procurement',
-      icon: '📋',
-      path: '/procurement',
-      subItems: [
-        { id: 'purchase-orders', label: 'Purchase Orders', path: '/procurement/orders', badge: quickStats.pendingOrders },
-        { id: 'requisitions', label: 'Requisitions', path: '/procurement/requisitions', badge: 3 },
-        { id: 'rfqs', label: 'RFQs', path: '/procurement/rfqs', badge: quickStats.pendingBids },
-        { id: 'approvals', label: 'Approvals', path: '/procurement/approvals', badge: 7 }
-      ]
-    },
-    {
-      id: 'suppliers',
-      label: 'Supplier Management',
-      icon: '👥',
-      path: '/suppliers',
-      subItems: [
-        { id: 'supplier-directory', label: 'Supplier Directory', path: '/suppliers/directory', badge: quickStats.activeSuppliers },
-        { id: 'supplier-performance', label: 'Performance', path: '/suppliers/performance', badge: null },
-        { id: 'supplier-evaluation', label: 'Evaluation', path: '/suppliers/evaluation', badge: null },
-        { id: 'contracts', label: 'Contracts', path: '/suppliers/contracts', badge: 4 }
-      ]
-    },
-    {
-      id: 'inventory',
-      label: 'Inventory',
-      icon: '📦',
-      path: '/inventory',
-      subItems: [
-        { id: 'products', label: 'Products', path: '/inventory/products', badge: null },
-        { id: 'categories', label: 'Categories', path: '/inventory/categories', badge: null },
-        { id: 'stock-alerts', label: 'Stock Alerts', path: '/inventory/alerts', badge: quickStats.lowStock },
-        { id: 'stock-movements', label: 'Movements', path: '/inventory/movements', badge: null }
-      ]
-    },
-    {
-      id: 'bidding',
-      label: 'Bidding',
-      icon: '🏷️',
-      path: '/bidding',
-      subItems: [
-        { id: 'active-bids', label: 'Active Bids', path: '/bidding/active', badge: quickStats.pendingBids },
-        { id: 'bid-evaluation', label: 'Evaluation', path: '/bidding/evaluation', badge: 2 },
-        { id: 'awarded-bids', label: 'Awarded Bids', path: '/bidding/awarded', badge: null },
-        { id: 'bid-history', label: 'History', path: '/bidding/history', badge: null }
-      ]
-    },
-    {
+  // Menu items with role-based filtering
+  const getMenuItems = () => {
+    const baseMenuItems = [
+      {
+        id: 'dashboard',
+        label: 'Dashboard',
+        icon: '📊',
+        path: '/dashboard',
+        badge: null,
+        roles: ['admin', 'procurement_manager', 'supplier']
+      }
+    ];
+
+    // Procurement Management (Admin & Procurement Manager)
+    if (hasRole('admin') || hasRole('procurement_manager')) {
+      baseMenuItems.push(
+        {
+          id: 'procurement',
+          label: 'Procurement',
+          icon: '📋',
+          path: '/procurement',
+          roles: ['admin', 'procurement_manager'],
+          subItems: [
+            { 
+              id: 'purchase-orders', 
+              label: 'Purchase Orders', 
+              path: '/procurement/orders', 
+              badge: quickStats.pendingOrders 
+            },
+            { 
+              id: 'requisitions', 
+              label: 'Requisitions', 
+              path: '/procurement/requisitions', 
+              badge: 3 
+            },
+            { 
+              id: 'rfqs', 
+              label: 'RFQs', 
+              path: '/procurement/rfqs', 
+              badge: quickStats.pendingBids 
+            },
+            { 
+              id: 'approvals', 
+              label: 'Approvals', 
+              path: '/procurement/approvals', 
+              badge: 7 
+            }
+          ]
+        },
+        {
+          id: 'suppliers',
+          label: 'Supplier Management',
+          icon: '👥',
+          path: '/suppliers',
+          roles: ['admin', 'procurement_manager'],
+          subItems: [
+            { 
+              id: 'supplier-directory', 
+              label: 'Supplier Directory', 
+              path: '/suppliers/directory', 
+              badge: quickStats.activeSuppliers 
+            },
+            { 
+              id: 'supplier-performance', 
+              label: 'Performance', 
+              path: '/suppliers/performance', 
+              badge: null 
+            },
+            { 
+              id: 'add-supplier', 
+              label: 'Add Supplier', 
+              path: '/suppliers/create', 
+              badge: null 
+            },
+            { 
+              id: 'contracts', 
+              label: 'Contracts', 
+              path: '/suppliers/contracts', 
+              badge: 4 
+            }
+          ]
+        },
+        {
+          id: 'inventory',
+          label: 'Inventory',
+          icon: '📦',
+          path: '/inventory',
+          roles: ['admin', 'procurement_manager'],
+          subItems: [
+            { 
+              id: 'products', 
+              label: 'Products', 
+              path: '/inventory/products', 
+              badge: null 
+            },
+            { 
+              id: 'categories', 
+              label: 'Categories', 
+              path: '/inventory/categories', 
+              badge: null 
+            },
+            { 
+              id: 'stock-alerts', 
+              label: 'Stock Alerts', 
+              path: '/inventory/alerts', 
+              badge: quickStats.lowStock 
+            },
+            { 
+              id: 'stock-movements', 
+              label: 'Movements', 
+              path: '/inventory/movements', 
+              badge: null 
+            }
+          ]
+        },
+        {
+          id: 'bidding',
+          label: 'Bidding',
+          icon: '🏷️',
+          path: '/bidding',
+          roles: ['admin', 'procurement_manager'],
+          subItems: [
+            { 
+              id: 'active-bids', 
+              label: 'Active Bids', 
+              path: '/bidding/active', 
+              badge: quickStats.pendingBids 
+            },
+            { 
+              id: 'bid-evaluation', 
+              label: 'Evaluation', 
+              path: '/bidding/evaluation', 
+              badge: 2 
+            },
+            { 
+              id: 'awarded-bids', 
+              label: 'Awarded Bids', 
+              path: '/bidding/awarded', 
+              badge: null 
+            },
+            { 
+              id: 'bid-history', 
+              label: 'History', 
+              path: '/bidding/history', 
+              badge: null 
+            }
+          ]
+        }
+      );
+    }
+
+    // Supplier Portal (Supplier & Admin)
+    if (hasRole('supplier') || hasRole('admin')) {
+      baseMenuItems.push({
+        id: 'supplier-portal',
+        label: 'Supplier Portal',
+        icon: '🏪',
+        path: '/supplier/dashboard',
+        roles: ['supplier', 'admin'],
+        subItems: [
+          { 
+            id: 'supplier-dashboard', 
+            label: 'Dashboard', 
+            path: '/supplier/dashboard', 
+            badge: null 
+          },
+          { 
+            id: 'rfq-opportunities', 
+            label: 'RFQ Opportunities', 
+            path: '/supplier/rfq-opportunities', 
+            badge: quickStats.pendingBids 
+          },
+          { 
+            id: 'bid-management', 
+            label: 'Bid Management', 
+            path: '/supplier/bid-management', 
+            badge: null 
+          },
+          { 
+            id: 'order-fulfillment', 
+            label: 'Order Fulfillment', 
+            path: '/supplier/order-fulfillment', 
+            badge: quickStats.pendingOrders 
+          },
+          { 
+            id: 'product-catalog', 
+            label: 'Product Catalog', 
+            path: '/supplier/product-catalog', 
+            badge: null 
+          },
+          { 
+            id: 'supplier-profile', 
+            label: 'My Profile', 
+            path: '/supplier/profile', 
+            badge: null 
+          }
+        ]
+      });
+    }
+
+    // Reports & Analytics (All authenticated users)
+    baseMenuItems.push({
       id: 'reports',
       label: 'Reports & Analytics',
       icon: '📈',
       path: '/reports',
+      roles: ['admin', 'procurement_manager', 'supplier'],
       subItems: [
-        { id: 'procurement-reports', label: 'Procurement', path: '/reports/procurement', badge: null },
-        { id: 'supplier-reports', label: 'Supplier', path: '/reports/supplier', badge: null },
-        { id: 'inventory-reports', label: 'Inventory', path: '/reports/inventory', badge: null },
-        { id: 'financial-reports', label: 'Financial', path: '/reports/financial', badge: null }
+        { 
+          id: 'procurement-reports', 
+          label: 'Procurement', 
+          path: '/reports/procurement', 
+          badge: null 
+        },
+        { 
+          id: 'supplier-reports', 
+          label: 'Supplier', 
+          path: '/reports/supplier', 
+          badge: null 
+        },
+        { 
+          id: 'inventory-reports', 
+          label: 'Inventory', 
+          path: '/reports/inventory', 
+          badge: null 
+        },
+        { 
+          id: 'financial-reports', 
+          label: 'Financial', 
+          path: '/reports/financial', 
+          badge: null 
+        }
       ]
-    },
-    {
+    });
+
+    // Settings (All authenticated users)
+    baseMenuItems.push({
       id: 'settings',
       label: 'Settings',
       icon: '⚙️',
       path: '/settings',
-      badge: null
-    }
-  ];
+      badge: null,
+      roles: ['admin', 'procurement_manager', 'supplier']
+    });
 
-  const quickActions = [
-    { id: 'quick-order', label: 'Create PO', icon: '📄', path: '/procurement/orders/create' },
-    { id: 'add-supplier', label: 'Add Supplier', icon: '👥', path: '/suppliers/create' },
-    { id: 'new-rfq', label: 'New RFQ', icon: '📋', path: '/procurement/rfqs/create' },
-    { id: 'stock-check', label: 'Stock Check', icon: '📦', path: '/inventory/check' }
-  ];
+    return baseMenuItems;
+  };
+
+  // Quick actions with role-based filtering
+  const getQuickActions = () => {
+    const actions = [];
+
+    if (hasRole('admin') || hasRole('procurement_manager')) {
+      actions.push(
+        { id: 'quick-order', label: 'Create PO', icon: '📄', path: '/procurement/orders/create' },
+        { id: 'add-supplier', label: 'Add Supplier', icon: '👥', path: '/suppliers/create' },
+        { id: 'new-rfq', label: 'New RFQ', icon: '📋', path: '/procurement/rfqs/create' },
+        { id: 'stock-check', label: 'Stock Check', icon: '📦', path: '/inventory/check' }
+      );
+    }
+
+    if (hasRole('supplier')) {
+      actions.push(
+        { id: 'view-rfqs', label: 'View RFQs', icon: '📋', path: '/supplier/rfq-opportunities' },
+        { id: 'manage-bids', label: 'Manage Bids', icon: '💼', path: '/supplier/bid-management' },
+        { id: 'update-catalog', label: 'Update Catalog', icon: '📦', path: '/supplier/product-catalog' }
+      );
+    }
+
+    return actions;
+  };
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -140,6 +331,33 @@ const Sidebar = () => {
   const isExactActivePath = (path) => {
     return location.pathname === path;
   };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
+  if (loading || !user) {
+    return (
+      <div className={`sidebar ${isCollapsed ? 'collapsed' : ''} loading`}>
+        <div className="sidebar-header">
+          {!isCollapsed && (
+            <div className="sidebar-logo">
+              <div className="logo-icon">🏢</div>
+              <span className="logo-text">ProcureFlow</span>
+            </div>
+          )}
+        </div>
+        <div className="sidebar-loading">
+          <div className="loading-spinner"></div>
+          <span>Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const menuItems = getMenuItems();
+  const quickActions = getQuickActions();
 
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -173,15 +391,22 @@ const Sidebar = () => {
             )}
           </div>
           <div className="user-info">
-            <div className="user-name">{user?.name}</div>
-            <div className="user-role">{user?.role}</div>
-            <div className="user-department">{user?.department}</div>
+            <div className="user-name">{user?.name || 'User'}</div>
+            <div className="user-role">{user?.role || 'User'}</div>
+            <div className="user-department">{user?.department || 'Procurement'}</div>
           </div>
+          <button 
+            className="logout-btn"
+            onClick={handleLogout}
+            title="Logout"
+          >
+            🚪
+          </button>
         </div>
       )}
 
       {/* Quick Actions */}
-      {!isCollapsed && (
+      {!isCollapsed && quickActions.length > 0 && (
         <div className="quick-actions-section">
           <h3 className="section-title">Quick Actions</h3>
           <div className="quick-actions-grid">
@@ -264,7 +489,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Quick Stats */}
-      {!isCollapsed && (
+      {!isCollapsed && (hasRole('admin') || hasRole('procurement_manager')) && (
         <div className="sidebar-footer">
           <div className="quick-stats">
             <h3 className="section-title">Quick Stats</h3>
@@ -315,6 +540,13 @@ const Sidebar = () => {
               <span className="action-icon">{action.icon}</span>
             </button>
           ))}
+          <button 
+            className="collapsed-action-btn logout"
+            onClick={handleLogout}
+            title="Logout"
+          >
+            <span className="action-icon">🚪</span>
+          </button>
         </div>
       )}
     </div>

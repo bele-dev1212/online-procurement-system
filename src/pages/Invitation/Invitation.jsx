@@ -75,7 +75,7 @@ const Invitation = () => {
           <h1>You're Invited!</h1>
           <p>
             <strong>{invitation.inviter}</strong> has invited you to join 
-            <strong> {invitation.organization}</strong> on ፈጣን ግዢ
+            <strong> {invitation.organization}</strong> on Procur Ethiopia
           </p>
           <div className="invitation-details">
             <p><strong>Role:</strong> {invitation.role}</p>

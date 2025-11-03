@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Contact.css';
 
 const Contact = () => {
@@ -35,10 +36,32 @@ const Contact = () => {
 
   return (
     <div className="contact">
+      {/* Navigation Header */}
+      <header className="contact-nav-header">
+        <div className="nav-container">
+          <div className="nav-brand">
+            <Link to="/" className="brand-logo">
+              <span className="logo-icon">⚡</span>
+              ProcureEthiopia
+            </Link>
+          </div>
+          <nav className="nav-links">
+            <Link to="/features" className="nav-link">Features</Link>
+            <Link to="/pricing" className="nav-link">Pricing</Link>
+            <Link to="/about" className="nav-link">About</Link>
+            <Link to="/contact" className="nav-link active">Contact</Link>
+          </nav>
+          <div className="nav-actions">
+            <Link to="/login" className="btn btn-outline">Login</Link>
+            <Link to="/register" className="btn btn-primary">Get Started</Link>
+          </div>
+        </div>
+      </header>
+
       <div className="container">
         <div className="contact-header">
           <h1>Contact Us</h1>
-          <p>Get in touch with our team to learn more about ፈጣን ግዢ</p>
+          <p>Get in touch with our team to learn more about our platform</p>
         </div>
 
         <div className="contact-content">

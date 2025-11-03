@@ -112,7 +112,7 @@ const Login = () => {
         <div className="login-header">
           <Link to="/" className="logo">
             <span className="logo-icon">⚡🏢</span>
-            <span className="logo-text">ፈጣን ግዢ</span>
+            <span className="logo-text">Procur Ethiopia</span>
           </Link>
           <h1>Sign In</h1>
           <p>Welcome back to your procurement dashboard</p>
@@ -198,7 +198,7 @@ const Login = () => {
           <p className="supplier-link">
             Are you a supplier?{' '}
             <Link to="/supplier/register" className="link">
-              Register as supplier
+              Create as supplier
             </Link>
           </p>
         </div>
