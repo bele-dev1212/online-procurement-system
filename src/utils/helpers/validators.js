@@ -8,6 +8,13 @@ import { VALIDATION_CONSTANTS } from '../constants/appConstants';
 /**
  * Common Validation Patterns
  */
+export const validatePurchaseOrder = (data) => {
+  const errors = {};
+  if (!data.supplierId) errors.supplierId = 'Supplier is required';
+  if (!data.deliveryDate) errors.deliveryDate = 'Delivery date is required';
+  if (!data.lineItems || data.lineItems.length === 0) errors.lineItems = 'At least one line item is required';
+  return errors;
+};
 export const VALIDATION_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   PHONE: /^\+?[\d\s\-()]{10,15}$/,

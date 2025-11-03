@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePurchaseOrders } from '../../../../hooks/usePurchaseOrders';
-import { useSuppliers } from '../../../../hooks/useSuppliers';
-import { useInventory } from '../../../../hooks/useInventory';
-import SearchBar from '../../../../components/common/SearchBar/SearchBar';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { formatCurrency, calculateTax, calculateTotal } from '../../../../utils/helpers/calculations';
-import { purchaseOrderPriority } from '../../../../utils/enums/purchaseOrderStatus';
-import { validatePurchaseOrder } from '../../../../utils/helpers/validators';
+import { usePurchaseOrders } from '../../../hooks/usePurchaseOrders';
+import { useSuppliers } from '../../../hooks/useSuppliers';
+import { useInventory } from '../../../hooks/useInventory';
+import SearchBar from '../../../components/common/SearchBar/SearchBar';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { CurrencyFormatters } from '../../../utils/helpers/formatters';
+const { formatCurrency } = CurrencyFormatters;
+import { PURCHASE_ORDER_PRIORITY} from '../../../utils/enums/purchaseOrderStatus';
+import { validatePurchaseOrder } from '../../../utils/helpers/validators';
 import './CreatePurchaseOrder.css';
 
 const CreatePurchaseOrder = () => {

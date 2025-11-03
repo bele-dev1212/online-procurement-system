@@ -4,6 +4,7 @@ import { dashboardAPI } from '../../services/api/dashboardAPI';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState({
     overview: {},
     recentActivities: [],
@@ -14,13 +15,18 @@ const Dashboard = () => {
     pendingApprovals: []
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [timeRange, setTimeRange] = useState('monthly');
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [timeRange]);
 
   const loadDashboardData = async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await dashboardAPI.getDashboardData(timeRange, userRole);
+      const response = await dashboardAPI.getDashboardData(timeRange, user?.role);
       
       if (response.success && response.data) {
         setDashboardData(response.data);
@@ -111,11 +117,11 @@ const Dashboard = () => {
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    }).format(amount);
+    }).format(amount || 0);
   };
 
   const formatNumber = (number) => {
-    return new Intl.NumberFormat('en-US').format(number);
+    return new Intl.NumberFormat('en-US').format(number || 0);
   };
 
   const handleQuickAction = (action) => {
@@ -133,6 +139,12 @@ const Dashboard = () => {
         break;
       case 'manage_suppliers':
         // navigate('/suppliers');
+        break;
+      case 'track_orders':
+        // navigate('/procurement/orders');
+        break;
+      case 'analyze_spend':
+        // navigate('/reports/spend-analysis');
         break;
       default:
         console.log('Action:', action);
@@ -187,15 +199,14 @@ const Dashboard = () => {
           <div className="metric-icon">💰</div>
           <div className="metric-content">
             <h3>Total Spend</h3>
-              <div className="metric-value">{formatCurrency(dashboardData.overview?.totalSpend || 0)}</div>
-              {dashboardData.overview?.spendChange !== undefined && (
-                <div className={`metric-trend ${getTrendClass(dashboardData.overview.spendChange)}`}>
-                  <span className="trend-icon">{getTrendIcon(dashboardData.overview.spendChange)}</span>
-                  <span className="trend-value">{Math.abs(dashboardData.overview.spendChange)}%</span>
-                </div>
-              )}
-              <span className="trend-label">vs last period</span>
-            </div>
+            <div className="metric-value">{formatCurrency(dashboardData.overview?.totalSpend || 0)}</div>
+            {dashboardData.overview?.spendChange !== undefined && (
+              <div className={`metric-trend ${getTrendClass(dashboardData.overview.spendChange)}`}>
+                <span className="trend-icon">{getTrendIcon(dashboardData.overview.spendChange)}</span>
+                <span className="trend-value">{Math.abs(dashboardData.overview.spendChange)}%</span>
+              </div>
+            )}
+            <span className="trend-label">vs last period</span>
           </div>
         </div>
 
@@ -203,15 +214,14 @@ const Dashboard = () => {
           <div className="metric-icon">📦</div>
           <div className="metric-content">
             <h3>Total Orders</h3>
-              <div className="metric-value">{formatNumber(dashboardData.overview?.totalOrders || 0)}</div>
-              {dashboardData.overview?.ordersChange !== undefined && (
-                <div className={`metric-trend ${getTrendClass(dashboardData.overview.ordersChange)}`}>
-                  <span className="trend-icon">{getTrendIcon(dashboardData.overview.ordersChange)}</span>
-                  <span className="trend-value">{Math.abs(dashboardData.overview.ordersChange)}%</span>
-                </div>
-              )}
-              <span className="trend-label">vs last period</span>
-            </div>
+            <div className="metric-value">{formatNumber(dashboardData.overview?.totalOrders || 0)}</div>
+            {dashboardData.overview?.ordersChange !== undefined && (
+              <div className={`metric-trend ${getTrendClass(dashboardData.overview.ordersChange)}`}>
+                <span className="trend-icon">{getTrendIcon(dashboardData.overview.ordersChange)}</span>
+                <span className="trend-value">{Math.abs(dashboardData.overview.ordersChange)}%</span>
+              </div>
+            )}
+            <span className="trend-label">vs last period</span>
           </div>
         </div>
 
@@ -219,15 +229,14 @@ const Dashboard = () => {
           <div className="metric-icon">💸</div>
           <div className="metric-content">
             <h3>Cost Savings</h3>
-              <div className="metric-value">{formatCurrency(dashboardData.overview?.costSavings || 0)}</div>
-              {dashboardData.overview?.savingsChange !== undefined && (
-                <div className={`metric-trend ${getTrendClass(dashboardData.overview.savingsChange)}`}>
-                  <span className="trend-icon">{getTrendIcon(dashboardData.overview.savingsChange)}</span>
-                  <span className="trend-value">{Math.abs(dashboardData.overview.savingsChange)}%</span>
-                </div>
-              )}
-              <span className="trend-label">vs last period</span>
-            </div>
+            <div className="metric-value">{formatCurrency(dashboardData.overview?.costSavings || 0)}</div>
+            {dashboardData.overview?.savingsChange !== undefined && (
+              <div className={`metric-trend ${getTrendClass(dashboardData.overview.savingsChange)}`}>
+                <span className="trend-icon">{getTrendIcon(dashboardData.overview.savingsChange)}</span>
+                <span className="trend-value">{Math.abs(dashboardData.overview.savingsChange)}%</span>
+              </div>
+            )}
+            <span className="trend-label">vs last period</span>
           </div>
         </div>
 
@@ -332,25 +341,25 @@ const Dashboard = () => {
               <div className="activities-list">
                 {dashboardData.recentActivities && dashboardData.recentActivities.length > 0 ? (
                   dashboardData.recentActivities.map(activity => (
-                  <div key={activity.id} className="activity-item">
-                    <div className="activity-icon">
-                      {getActivityIcon(activity.type)}
-                    </div>
-                    <div className="activity-content">
-                      <h4>{activity.title}</h4>
-                      <p>{activity.description}</p>
-                      <div className="activity-meta">
-                        <span className="user">{activity.user}</span>
-                        <span className="time">
-                          {new Date(activity.timestamp).toLocaleDateString()}
-                        </span>
+                    <div key={activity.id} className="activity-item">
+                      <div className="activity-icon">
+                        {getActivityIcon(activity.type)}
+                      </div>
+                      <div className="activity-content">
+                        <h4>{activity.title}</h4>
+                        <p>{activity.description}</p>
+                        <div className="activity-meta">
+                          <span className="user">{activity.user}</span>
+                          <span className="time">
+                            {new Date(activity.timestamp).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={`activity-status ${getStatusClass(activity.status)}`}>
+                        {getStatusIcon(activity.status)}
                       </div>
                     </div>
-                    <div className={`activity-status ${getStatusClass(activity.status)}`}>
-                      {getStatusIcon(activity.status)}
-                    </div>
-                  </div>
-                ))
+                  ))
                 ) : (
                   <div className="empty-state">
                     <p>No recent activities</p>
@@ -370,25 +379,30 @@ const Dashboard = () => {
               <div className="alerts-list">
                 {dashboardData.stockAlerts && dashboardData.stockAlerts.length > 0 ? (
                   dashboardData.stockAlerts.map(alert => (
-                  <div key={alert.id} className="alert-item">
-                    <div className="alert-icon">
-                      {getStatusIcon(alert.status)}
-                    </div>
-                    <div className="alert-content">
-                      <h4>{alert.product}</h4>
-                      <p>SKU: {alert.sku}</p>
-                      <div className="alert-meta">
-                        <span>Current: {alert.currentStock}</span>
-                        <span>Min: {alert.minStock}</span>
+                    <div key={alert.id} className="alert-item">
+                      <div className="alert-icon">
+                        {getStatusIcon(alert.status)}
+                      </div>
+                      <div className="alert-content">
+                        <h4>{alert.product}</h4>
+                        <p>SKU: {alert.sku}</p>
+                        <div className="alert-meta">
+                          <span>Current: {alert.currentStock}</span>
+                          <span>Min: {alert.minStock}</span>
+                        </div>
+                      </div>
+                      <div className="alert-actions">
+                        <button className="btn-action small">
+                          Create PO
+                        </button>
                       </div>
                     </div>
-                    <div className="alert-actions">
-                      <button className="btn-action small">
-                        Create PO
-                      </button>
-                    </div>
+                  ))
+                ) : (
+                  <div className="empty-state">
+                    <p>No stock alerts</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
@@ -406,24 +420,24 @@ const Dashboard = () => {
               <div className="approvals-list">
                 {dashboardData.pendingApprovals && dashboardData.pendingApprovals.length > 0 ? (
                   dashboardData.pendingApprovals.map(approval => (
-                  <div key={approval.id} className="approval-item">
-                    <div className="approval-type">
-                      {getActivityIcon(approval.type)}
-                    </div>
-                    <div className="approval-content">
-                      <h4>{approval.reference}</h4>
-                      <p>{formatCurrency(approval.amount)} • {approval.department}</p>
-                      <div className="approval-meta">
-                        <span>By: {approval.requester}</span>
-                        <span>{approval.daysPending} day(s) pending</span>
+                    <div key={approval.id} className="approval-item">
+                      <div className="approval-type">
+                        {getActivityIcon(approval.type)}
+                      </div>
+                      <div className="approval-content">
+                        <h4>{approval.reference}</h4>
+                        <p>{formatCurrency(approval.amount)} • {approval.department}</p>
+                        <div className="approval-meta">
+                          <span>By: {approval.requester}</span>
+                          <span>{approval.daysPending} day(s) pending</span>
+                        </div>
+                      </div>
+                      <div className="approval-actions">
+                        <button className="btn-action small primary">
+                          Review
+                        </button>
                       </div>
                     </div>
-                    <div className="approval-actions">
-                      <button className="btn-action small primary">
-                        Review
-                      </button>
-                    </div>
-                  </div>
                   ))
                 ) : (
                   <div className="empty-state">
@@ -449,34 +463,39 @@ const Dashboard = () => {
               <div className="suppliers-list">
                 {dashboardData.supplierPerformance && dashboardData.supplierPerformance.length > 0 ? (
                   dashboardData.supplierPerformance.map(supplier => (
-                  <div key={supplier.id} className="supplier-item">
-                    <div className="supplier-avatar">
-                      {supplier.name.charAt(0)}
+                    <div key={supplier.id} className="supplier-item">
+                      <div className="supplier-avatar">
+                        {supplier.name?.charAt(0) || 'S'}
+                      </div>
+                      <div className="supplier-content">
+                        <h4>{supplier.name || 'Supplier'}</h4>
+                        <div className="supplier-rating">
+                          <span className="stars">
+                            {'★'.repeat(Math.floor(supplier.rating || 0))}
+                            {'☆'.repeat(5 - Math.floor(supplier.rating || 0))}
+                          </span>
+                          <span className="rating-value">{supplier.rating || 0}</span>
+                        </div>
+                        <div className="supplier-metrics">
+                          <span>Delivery: {supplier.delivery || 0}%</span>
+                          <span>Quality: {supplier.quality || 0}%</span>
+                        </div>
+                      </div>
+                      <div className="supplier-spend">
+                        <div className="spend-amount">
+                          {formatCurrency(supplier.spend)}
+                        </div>
+                        <div className={`trend ${supplier.trend || 'neutral'}`}>
+                          {supplier.trend === 'up' ? '↗️' : supplier.trend === 'down' ? '↘️' : '→'}
+                        </div>
+                      </div>
                     </div>
-                    <div className="supplier-content">
-                      <h4>{supplier.name}</h4>
-                      <div className="supplier-rating">
-                        <span className="stars">
-                          {'★'.repeat(Math.floor(supplier.rating))}
-                          {'☆'.repeat(5 - Math.floor(supplier.rating))}
-                        </span>
-                        <span className="rating-value">{supplier.rating}</span>
-                      </div>
-                      <div className="supplier-metrics">
-                        <span>Delivery: {supplier.delivery}%</span>
-                        <span>Quality: {supplier.quality}%</span>
-                      </div>
-                    </div>
-                    <div className="supplier-spend">
-                      <div className="spend-amount">
-                        {formatCurrency(supplier.spend)}
-                      </div>
-                      <div className={`trend ${supplier.trend}`}>
-                        {supplier.trend === 'up' ? '↗️' : supplier.trend === 'down' ? '↘️' : '→'}
-                      </div>
-                    </div>
+                  ))
+                ) : (
+                  <div className="empty-state">
+                    <p>No supplier data</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
@@ -552,65 +571,6 @@ const Dashboard = () => {
                       className="progress-bar"
                       style={{ width: '70%' }}
                     ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <h2>Quick Stats</h2>
-              <span className="card-subtitle">At a glance</span>
-            </div>
-            <div className="card-content">
-              <div className="stats-grid">
-                <div className="stat-item">
-                  <div className="stat-icon">📝</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats?.pendingRequisitions || 0}</div>
-                    <div className="stat-label">Pending Requisitions</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">💰</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats?.openRFQs || 0}</div>
-                    <div className="stat-label">Open RFQs</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">⚖️</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats?.activeBids || 0}</div>
-                    <div className="stat-label">Active Bids</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">🚨</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats?.overdueDeliveries || 0}</div>
-                    <div className="stat-label">Overdue Deliveries</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">📊</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats?.supplierEvaluations || 0}</div>
-                    <div className="stat-label">Supplier Evaluations</div>
-                  </div>
-                </div>
-
-                <div className="stat-item">
-                  <div className="stat-icon">📄</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{dashboardData.quickStats?.contractRenewals || 0}</div>
-                    <div className="stat-label">Contract Renewals</div>
                   </div>
                 </div>
               </div>

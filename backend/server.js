@@ -25,6 +25,8 @@ async function connectDB() {
     // Create indexes
     await db.collection('users').createIndex({ email: 1 }, { unique: true });
     await db.collection('organizations').createIndex({ name: 1 });
+    await db.collection('suppliers').createIndex({ userId: 1 }, { unique: true });
+    await db.collection('suppliers').createIndex({ companyName: 1 });
     await db.collection('invitations').createIndex({ token: 1 }, { unique: true });
     await db.collection('invitations').createIndex({ email: 1, organization: 1 });
     await db.collection('invitations').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
@@ -416,7 +418,202 @@ async function handleOrganizationRegister(req, res) {
     });
   }
 }
+// Supplier Registration Handler
+async function handleSupplierRegister(req, res) {
+  try {
+    const body = await parseBody(req);
+    const {
+      email, password, fullName, phone, companyName, businessType,
+      taxId, yearEstablished, employeeCount, website, address,
+      city, country, postalCode, businessDescription, categories, certifications
+    } = body;
 
+    console.log('Supplier registration attempt:', email);
+
+    // Validation
+    if (!email?.trim() || !validateEmail(email)) {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'Valid email is required'
+      });
+    }
+
+    if (!password || password.length < 8) {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'Password must be at least 8 characters'
+      });
+    }
+
+    if (!fullName?.trim()) {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'Contact person name is required'
+      });
+    }
+
+    if (!companyName?.trim()) {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'Company name is required'
+      });
+    }
+
+    if (!businessType?.trim()) {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'Business type is required'
+      });
+    }
+
+    // Check if user exists
+    const existingUser = await db.collection('users').findOne({ 
+      email: email.trim().toLowerCase() 
+    });
+    
+    if (existingUser) {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'User with this email already exists'
+      });
+    }
+
+    // Create a supplier organization
+    const organizationData = {
+      name: companyName.trim(),
+      type: 'supplier',
+      industry: businessType,
+      contactEmail: email.trim().toLowerCase(),
+      phone: phone?.trim() || '',
+      website: website?.trim() || '',
+      address: address?.trim() || '',
+      city: city?.trim() || '',
+      country: country?.trim() || '',
+      postalCode: postalCode?.trim() || '',
+      status: 'active', // Suppliers need approval
+      isSupplier: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const orgResult = await db.collection('organizations').insertOne(organizationData);
+    const organizationId = orgResult.insertedId;
+
+    console.log('Supplier organization created:', organizationId);
+
+    // Create supplier user
+    const hashedPassword = await bcrypt.hash(password, 12);
+    
+    const userData = {
+      firstName: fullName.trim(),
+      lastName: '', // Suppliers might not have separate first/last names
+      email: email.trim().toLowerCase(),
+      password: hashedPassword,
+      role: 'supplier_user',
+      phone: phone?.trim() || '',
+      organization: organizationId,
+      isVerified: false, // Suppliers need email verification
+      isSupplier: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const userResult = await db.collection('users').insertOne(userData);
+    const userId = userResult.insertedId;
+
+    console.log('Supplier user created:', userId);
+
+    // Create supplier profile with additional details
+    const supplierProfile = {
+      userId: userId,
+      organizationId: organizationId,
+      companyName: companyName.trim(),
+      businessType: businessType.trim(),
+      taxId: taxId?.trim() || '',
+      yearEstablished: yearEstablished || null,
+      employeeCount: employeeCount || '',
+      businessDescription: businessDescription?.trim() || '',
+      categories: categories || [],
+      certifications: certifications?.trim() || '',
+      address: address?.trim() || '',
+      city: city?.trim() || '',
+      country: country?.trim() || '',
+      postalCode: postalCode?.trim() || '',
+      website: website?.trim() || '',
+      status: 'active', // Needs admin approval
+      rating: 0,
+      totalOrders: 0,
+      completionRate: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    await db.collection('suppliers').insertOne(supplierProfile);
+
+    console.log('Supplier profile created for user:', userId);
+
+    // Generate auth token
+    const authToken = jwt.sign(
+      {
+        userId: userId.toString(),
+        email: userData.email,
+        role: userData.role,
+        organization: organizationId.toString(),
+        isSupplier: true
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    sendResponse(res, 201, {
+      success: true,
+      message: 'Supplier registration submitted successfully! Your account will be activated after verification.',
+      data: {
+        user: {
+          id: userId,
+          firstName: userData.firstName,
+          email: userData.email,
+          role: userData.role,
+          isVerified: userData.isVerified,
+          isSupplier: true
+        },
+        organization: {
+          id: organizationId,
+          name: organizationData.name,
+          type: 'supplier'
+        },
+        supplier: {
+          companyName: supplierProfile.companyName,
+          businessType: supplierProfile.businessType,
+          status: supplierProfile.status
+        },
+        token: authToken
+      }
+    });
+
+  } catch (error) {
+    console.error('Supplier registration error:', error);
+    
+    if (error.message === 'Invalid JSON body') {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'Invalid JSON in request body'
+      });
+    }
+
+    if (error.code === 11000) {
+      return sendResponse(res, 400, {
+        success: false,
+        message: 'User with this email already exists'
+      });
+    }
+
+    sendResponse(res, 500, {
+      success: false,
+      message: 'Internal server error during supplier registration'
+    });
+  }
+}
 async function handleLogin(req, res) {
   try {
     const body = await parseBody(req);
@@ -1001,8 +1198,13 @@ async function handleRequest(req, res) {
     // Route mapping
     if (method === 'POST' && url === '/api/auth/register') {
       await handleUserRegister(req, res);
-    } else if (method === 'POST' && url === '/api/organizations/register') {
+    } else if (method === 'POST' && url === '/api/auth/register/supplier') {
+      await handleSupplierRegister(req, res);
+    }
+    else if (method === 'POST' && url === '/api/organizations/register') {
       await handleOrganizationRegister(req, res);
+
+
     } else if (method === 'POST' && url === '/api/auth/login') {
       await handleLogin(req, res);
     } else if (method === 'GET' && url === '/api/auth/me') {

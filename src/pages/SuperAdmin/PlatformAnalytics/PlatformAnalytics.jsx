@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSuperAdmin } from '../../../contexts/SuperAdminContext';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import Toast from '../../../components/common/Toast';
+import SimpleBarChart from '../../../components/charts/SimpleBarChart';
 import './PlatformAnalytics.css';
 
 const PlatformAnalytics = () => {
@@ -28,6 +29,7 @@ const PlatformAnalytics = () => {
   const loadAnalyticsData = async () => {
     try {
       setRefreshing(true);
+      
       await Promise.all([
         fetchPlatformStats(),
         fetchUserGrowth(timeRange),
@@ -35,6 +37,7 @@ const PlatformAnalytics = () => {
         fetchPlatformActivity(timeRange),
         fetchSubscriptionAnalytics()
       ]);
+      
     } catch (error) {
       showToast('Failed to load analytics data', 'error');
     } finally {
@@ -65,6 +68,8 @@ const PlatformAnalytics = () => {
   };
 
   const getGrowthData = () => {
+    if (!platformStats) return { users: 0, organizations: 0, revenue: 0, rfqs: 0 };
+    
     return {
       users: calculateGrowth(platformStats.totalUsers, platformStats.previousPeriodUsers),
       organizations: calculateGrowth(platformStats.totalOrganizations, platformStats.previousPeriodOrganizations),
@@ -75,7 +80,7 @@ const PlatformAnalytics = () => {
 
   const growthData = getGrowthData();
 
-  if (loading && !platformStats.totalUsers) return <LoadingSpinner />;
+  if (loading && !platformStats?.totalUsers) return <LoadingSpinner />;
 
   return (
     <div className="platform-analytics">
@@ -157,10 +162,10 @@ const PlatformAnalytics = () => {
           </div>
           <div className="metric-content">
             <h3>Total Users</h3>
-            <div className="metric-value">{formatNumber(platformStats.totalUsers)}</div>
+            <div className="metric-value">{formatNumber(platformStats?.totalUsers || 0)}</div>
             <div className="metric-description">
-              <span className="user-type buyers">{platformStats.buyerCount || 0} buyers</span>
-              <span className="user-type suppliers">{platformStats.supplierCount || 0} suppliers</span>
+              <span className="user-type buyers">{platformStats?.buyerCount || 0} buyers</span>
+              <span className="user-type suppliers">{platformStats?.supplierCount || 0} suppliers</span>
             </div>
           </div>
         </div>
@@ -174,9 +179,9 @@ const PlatformAnalytics = () => {
           </div>
           <div className="metric-content">
             <h3>Organizations</h3>
-            <div className="metric-value">{formatNumber(platformStats.totalOrganizations)}</div>
+            <div className="metric-value">{formatNumber(platformStats?.totalOrganizations || 0)}</div>
             <div className="metric-description">
-              {platformStats.activeOrganizations || 0} active • {platformStats.newOrganizations || 0} new
+              {platformStats?.activeOrganizations || 0} active • {platformStats?.newOrganizations || 0} new
             </div>
           </div>
         </div>
@@ -190,9 +195,9 @@ const PlatformAnalytics = () => {
           </div>
           <div className="metric-content">
             <h3>Monthly Revenue</h3>
-            <div className="metric-value">{formatCurrency(platformStats.monthlyRevenue)}</div>
+            <div className="metric-value">{formatCurrency(platformStats?.monthlyRevenue || 0)}</div>
             <div className="metric-description">
-              MRR • {platformStats.recurringCustomers || 0} paying customers
+              MRR • {platformStats?.recurringCustomers || 0} paying customers
             </div>
           </div>
         </div>
@@ -206,9 +211,9 @@ const PlatformAnalytics = () => {
           </div>
           <div className="metric-content">
             <h3>Active RFQs</h3>
-            <div className="metric-value">{formatNumber(platformStats.activeRFQs)}</div>
+            <div className="metric-value">{formatNumber(platformStats?.activeRFQs || 0)}</div>
             <div className="metric-description">
-              {platformStats.completedRFQs || 0} completed • {platformStats.averageResponseTime || 'N/A'} avg response
+              {platformStats?.completedRFQs || 0} completed • {platformStats?.averageResponseTime || 'N/A'} avg response
             </div>
           </div>
         </div>
@@ -223,14 +228,11 @@ const PlatformAnalytics = () => {
               <span className="chart-subtitle">New users over time</span>
             </div>
             <div className="chart-container">
-              {analytics.userGrowth ? (
-                <UserGrowthChart data={analytics.userGrowth} timeRange={timeRange} />
-              ) : (
-                <ChartPlaceholder 
-                  title="User Growth Data" 
-                  message="User acquisition trends will appear here"
-                />
-              )}
+              <SimpleBarChart 
+                data={analytics?.userGrowth || []} 
+                timeRange={timeRange}
+                title="User Growth"
+              />
             </div>
           </div>
 
@@ -240,14 +242,12 @@ const PlatformAnalytics = () => {
               <span className="chart-subtitle">Monthly recurring revenue</span>
             </div>
             <div className="chart-container">
-              {analytics.revenueTrends ? (
-                <RevenueChart data={analytics.revenueTrends} timeRange={timeRange} />
-              ) : (
-                <ChartPlaceholder 
-                  title="Revenue Data" 
-                  message="Revenue trends will appear here"
-                />
-              )}
+              <SimpleBarChart 
+                data={analytics?.revenueTrends || []} 
+                timeRange={timeRange}
+                title="Revenue"
+                type="revenue"
+              />
             </div>
           </div>
         </div>
@@ -259,14 +259,12 @@ const PlatformAnalytics = () => {
               <span className="chart-subtitle">RFQs, bids, and user actions</span>
             </div>
             <div className="chart-container">
-              {analytics.platformActivity ? (
-                <ActivityChart data={analytics.platformActivity} timeRange={timeRange} />
-              ) : (
-                <ChartPlaceholder 
-                  title="Activity Data" 
-                  message="Platform activity metrics will appear here"
-                />
-              )}
+              <SimpleBarChart 
+                data={analytics?.platformActivity || []} 
+                timeRange={timeRange}
+                title="Platform Activity"
+                type="activity"
+              />
             </div>
           </div>
         </div>
@@ -284,35 +282,35 @@ const PlatformAnalytics = () => {
               <div className="distribution-item">
                 <div className="distribution-info">
                   <span className="distribution-label">Buyer Users</span>
-                  <span className="distribution-value">{platformStats.buyerCount || 0}</span>
+                  <span className="distribution-value">{platformStats?.buyerCount || 0}</span>
                 </div>
                 <div className="distribution-bar">
                   <div 
                     className="distribution-fill buyers"
                     style={{ 
-                      width: `${((platformStats.buyerCount || 0) / (platformStats.totalUsers || 1)) * 100}%` 
+                      width: `${((platformStats?.buyerCount || 0) / (platformStats?.totalUsers || 1)) * 100}%` 
                     }}
                   ></div>
                 </div>
                 <span className="distribution-percentage">
-                  {((platformStats.buyerCount || 0) / (platformStats.totalUsers || 1) * 100).toFixed(1)}%
+                  {((platformStats?.buyerCount || 0) / (platformStats?.totalUsers || 1) * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="distribution-item">
                 <div className="distribution-info">
                   <span className="distribution-label">Supplier Users</span>
-                  <span className="distribution-value">{platformStats.supplierCount || 0}</span>
+                  <span className="distribution-value">{platformStats?.supplierCount || 0}</span>
                 </div>
                 <div className="distribution-bar">
                   <div 
                     className="distribution-fill suppliers"
                     style={{ 
-                      width: `${((platformStats.supplierCount || 0) / (platformStats.totalUsers || 1)) * 100}%` 
+                      width: `${((platformStats?.supplierCount || 0) / (platformStats?.totalUsers || 1)) * 100}%` 
                     }}
                   ></div>
                 </div>
                 <span className="distribution-percentage">
-                  {((platformStats.supplierCount || 0) / (platformStats.totalUsers || 1) * 100).toFixed(1)}%
+                  {((platformStats?.supplierCount || 0) / (platformStats?.totalUsers || 1) * 100).toFixed(1)}%
                 </span>
               </div>
             </div>
@@ -324,7 +322,7 @@ const PlatformAnalytics = () => {
               <span className="card-subtitle">Organization plan breakdown</span>
             </div>
             <div className="subscription-content">
-              {analytics.subscriptionDistribution?.map((plan, index) => (
+              {analytics?.subscriptionDistribution?.map((plan, index) => (
                 <div key={plan.name || index} className="subscription-item">
                   <div className="subscription-info">
                     <span className="subscription-name">{plan.name}</span>
@@ -332,7 +330,7 @@ const PlatformAnalytics = () => {
                   </div>
                   <div className="subscription-bar">
                     <div 
-                      className={`subscription-fill ${plan.name.toLowerCase()}`}
+                      className={`subscription-fill ${plan.name?.toLowerCase()}`}
                       style={{ width: `${plan.percentage}%` }}
                     ></div>
                   </div>
@@ -357,37 +355,37 @@ const PlatformAnalytics = () => {
               <div className="performance-item">
                 <span className="performance-label">User Activation Rate</span>
                 <span className="performance-value">
-                  {platformStats.activationRate || '0'}%
+                  {platformStats?.activationRate || '0'}%
                 </span>
                 <div className="performance-bar">
                   <div 
                     className="performance-fill"
-                    style={{ width: `${platformStats.activationRate || 0}%` }}
+                    style={{ width: `${platformStats?.activationRate || 0}%` }}
                   ></div>
                 </div>
               </div>
               <div className="performance-item">
                 <span className="performance-label">Average Session Duration</span>
                 <span className="performance-value">
-                  {platformStats.avgSessionDuration || '0'} min
+                  {platformStats?.avgSessionDuration || '0'} min
                 </span>
               </div>
               <div className="performance-item">
                 <span className="performance-label">RFQ Completion Rate</span>
                 <span className="performance-value">
-                  {platformStats.rfqCompletionRate || '0'}%
+                  {platformStats?.rfqCompletionRate || '0'}%
                 </span>
                 <div className="performance-bar">
                   <div 
                     className="performance-fill"
-                    style={{ width: `${platformStats.rfqCompletionRate || 0}%` }}
+                    style={{ width: `${platformStats?.rfqCompletionRate || 0}%` }}
                   ></div>
                 </div>
               </div>
               <div className="performance-item">
                 <span className="performance-label">Customer Satisfaction</span>
                 <span className="performance-value">
-                  {platformStats.customerSatisfaction || '0'}/10
+                  {platformStats?.customerSatisfaction || '0'}/10
                 </span>
               </div>
             </div>
@@ -399,7 +397,7 @@ const PlatformAnalytics = () => {
               <span className="card-subtitle">Users by region</span>
             </div>
             <div className="geographic-content">
-              {analytics.geographicDistribution?.map((region, index) => (
+              {analytics?.geographicDistribution?.map((region, index) => (
                 <div key={region.name || index} className="region-item">
                   <span className="region-name">{region.name}</span>
                   <span className="region-count">{region.count} users</span>
@@ -424,130 +422,23 @@ const PlatformAnalytics = () => {
       <div className="quick-stats-footer">
         <div className="stat-item">
           <span className="stat-label">Total RFQs This Month</span>
-          <span className="stat-value">{formatNumber(platformStats.monthlyRFQs || 0)}</span>
+          <span className="stat-value">{formatNumber(platformStats?.monthlyRFQs || 0)}</span>
         </div>
         <div className="stat-item">
           <span className="stat-label">Total Bids Submitted</span>
-          <span className="stat-value">{formatNumber(platformStats.totalBids || 0)}</span>
+          <span className="stat-value">{formatNumber(platformStats?.totalBids || 0)}</span>
         </div>
         <div className="stat-item">
           <span className="stat-label">Successful Transactions</span>
-          <span className="stat-value">{formatNumber(platformStats.successfulTransactions || 0)}</span>
+          <span className="stat-value">{formatNumber(platformStats?.successfulTransactions || 0)}</span>
         </div>
         <div className="stat-item">
           <span className="stat-label">Platform Uptime</span>
-          <span className="stat-value">{platformStats.uptime || '99.9%'}</span>
+          <span className="stat-value">{platformStats?.uptime || '99.9%'}</span>
         </div>
       </div>
     </div>
   );
 };
-
-// Enhanced Chart Components with Real Data Visualization
-const UserGrowthChart = ({ data, timeRange }) => {
-  if (!data || !data.length) {
-    return <ChartPlaceholder title="No Data" message="User growth data not available" />;
-  }
-
-  const maxValue = Math.max(...data.map(item => item.value));
-  
-  return (
-    <div className="simple-bar-chart">
-      <div className="chart-bars">
-        {data.map((item, index) => (
-          <div key={index} className="bar-container">
-            <div 
-              className="bar"
-              style={{ height: `${(item.value / maxValue) * 100}%` }}
-              title={`${item.label}: ${item.value} users`}
-            ></div>
-            <span className="bar-label">{item.label}</span>
-          </div>
-        ))}
-      </div>
-      <div className="chart-legend">
-        <span>User Growth ({timeRange})</span>
-      </div>
-    </div>
-  );
-};
-
-const RevenueChart = ({ data, timeRange }) => {
-  if (!data || !data.length) {
-    return <ChartPlaceholder title="No Data" message="Revenue data not available" />;
-  }
-
-  const maxValue = Math.max(...data.map(item => item.amount));
-  
-  return (
-    <div className="simple-bar-chart revenue">
-      <div className="chart-bars">
-        {data.map((item, index) => (
-          <div key={index} className="bar-container">
-            <div 
-              className="bar revenue-bar"
-              style={{ height: `${(item.amount / maxValue) * 100}%` }}
-              title={`${item.period}: $${item.amount}`}
-            ></div>
-            <span className="bar-label">{item.period}</span>
-          </div>
-        ))}
-      </div>
-      <div className="chart-legend">
-        <span>Revenue Trends ({timeRange})</span>
-      </div>
-    </div>
-  );
-};
-
-const ActivityChart = ({ data, timeRange }) => {
-  if (!data || !data.length) {
-    return <ChartPlaceholder title="No Data" message="Activity data not available" />;
-  }
-
-  const activities = ['RFQs', 'Bids', 'Users', 'Organizations'];
-  const maxValue = Math.max(...activities.map(activity => 
-    data.reduce((sum, item) => sum + (item[activity.toLowerCase()] || 0), 0)
-  ));
-
-  return (
-    <div className="multi-bar-chart">
-      <div className="chart-bars">
-        {data.map((item, index) => (
-          <div key={index} className="multi-bar-container">
-            {activities.map(activity => (
-              <div
-                key={activity}
-                className={`activity-bar ${activity.toLowerCase()}`}
-                style={{ 
-                  height: `${((item[activity.toLowerCase()] || 0) / maxValue) * 100}%` 
-                }}
-                title={`${item.period}: ${activity} - ${item[activity.toLowerCase()] || 0}`}
-              ></div>
-            ))}
-            <span className="bar-label">{item.period}</span>
-          </div>
-        ))}
-      </div>
-      <div className="chart-legend">
-        {activities.map(activity => (
-          <div key={activity} className="legend-item">
-            <span className={`legend-color ${activity.toLowerCase()}`}></span>
-            <span>{activity}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const ChartPlaceholder = ({ title, message }) => (
-  <div className="chart-placeholder">
-    <div className="placeholder-icon">📊</div>
-    <h4>{title}</h4>
-    <p>{message}</p>
-    <small>Connect to analytics service to view data</small>
-  </div>
-);
 
 export default PlatformAnalytics;

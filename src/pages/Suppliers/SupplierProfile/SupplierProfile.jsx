@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useSuppliers } from '../../../../hooks/useSuppliers';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { formatCurrency, formatDate } from '../../../../utils/helpers/formatters';
-import { supplierStatus } from '../../../../utils/enums/supplierStatus';
+import { useSuppliers } from '../../../hooks/useSuppliers';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { CurrencyFormatters, DataFormatters } from '../../../utils/helpers/formatters';
+
+import { SUPPLIER_STATUS } from '../../../utils/enums/supplierStatus';
 import './SupplierProfile.css';
 
 const SupplierProfile = () => {

@@ -1,3 +1,4 @@
+// pages/SuperAdmin/Dashboard/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useSuperAdmin } from '../../../contexts/SuperAdminContext';
 import { Link } from 'react-router-dom';
@@ -10,9 +11,11 @@ const SuperAdminDashboard = () => {
     platformStats, 
     analytics, 
     loading, 
+    error,
     fetchPlatformStats, 
     fetchUserGrowth,
-    fetchRecentActivity 
+    fetchRecentActivity,
+    clearError
   } = useSuperAdmin();
 
   const [timeRange, setTimeRange] = useState('30d');
@@ -24,6 +27,7 @@ const SuperAdminDashboard = () => {
 
   const loadDashboardData = async () => {
     try {
+      clearError();
       await Promise.all([
         fetchPlatformStats(),
         fetchUserGrowth(timeRange),
@@ -49,24 +53,45 @@ const SuperAdminDashboard = () => {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0
-    }).format(amount);
+    }).format(amount || 0);
   };
 
   const formatNumber = (num) => {
-    return new Intl.NumberFormat('en-US').format(num);
+    return new Intl.NumberFormat('en-US').format(num || 0);
   };
 
-  if (loading && !platformStats.totalUsers) return <LoadingSpinner />;
+  // Use actual data from context
+  const stats = platformStats || {};
+  const recentActivity = analytics?.recentActivity || [];
+
+  if (loading && !platformStats?.totalUsers && !error) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="super-admin-dashboard">
       {/* Toast Notifications */}
-      {toast.show && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast({ show: false, message: '', type: '' })}
-        />
+      <Toast 
+        message={toast.message} 
+        type={toast.type} 
+        show={toast.show}
+        onClose={() => setToast({ show: false, message: '', type: '' })}
+      />
+
+      {/* Error Display */}
+      {error && (
+        <div className="error-banner">
+          <div className="error-content">
+            <span className="error-icon">⚠️</span>
+            <span className="error-text">{error}</span>
+            <button 
+              onClick={clearError}
+              className="error-dismiss"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
       )}
 
       <div className="dashboard-header">
@@ -103,14 +128,14 @@ const SuperAdminDashboard = () => {
           <div className="metric-header">
             <div className="metric-icon">👥</div>
             <div className="metric-trend positive">
-              +{calculateGrowth(platformStats.totalUsers, platformStats.previousUsers)}%
+              +{calculateGrowth(stats.totalUsers, stats.previousUsers)}%
             </div>
           </div>
           <div className="metric-content">
             <h3>Total Users</h3>
-            <div className="metric-value">{formatNumber(platformStats.totalUsers || 0)}</div>
+            <div className="metric-value">{formatNumber(stats.totalUsers)}</div>
             <div className="metric-description">
-              {platformStats.buyerCount || 0} buyers • {platformStats.supplierCount || 0} suppliers
+              {stats.buyerCount || 0} buyers • {stats.supplierCount || 0} suppliers
             </div>
           </div>
         </div>
@@ -119,14 +144,14 @@ const SuperAdminDashboard = () => {
           <div className="metric-header">
             <div className="metric-icon">🏢</div>
             <div className="metric-trend positive">
-              +{calculateGrowth(platformStats.totalOrganizations, platformStats.previousOrganizations)}%
+              +{calculateGrowth(stats.totalOrganizations, stats.previousOrganizations)}%
             </div>
           </div>
           <div className="metric-content">
             <h3>Organizations</h3>
-            <div className="metric-value">{formatNumber(platformStats.totalOrganizations || 0)}</div>
+            <div className="metric-value">{formatNumber(stats.totalOrganizations)}</div>
             <div className="metric-description">
-              {platformStats.activeOrganizations || 0} active
+              {stats.activeOrganizations || 0} active
             </div>
           </div>
         </div>
@@ -135,12 +160,12 @@ const SuperAdminDashboard = () => {
           <div className="metric-header">
             <div className="metric-icon">💰</div>
             <div className="metric-trend positive">
-              +{calculateGrowth(platformStats.monthlyRevenue, platformStats.previousRevenue)}%
+              +{calculateGrowth(stats.monthlyRevenue, stats.previousRevenue)}%
             </div>
           </div>
           <div className="metric-content">
             <h3>Monthly Revenue</h3>
-            <div className="metric-value">{formatCurrency(platformStats.monthlyRevenue || 0)}</div>
+            <div className="metric-value">{formatCurrency(stats.monthlyRevenue)}</div>
             <div className="metric-description">
               MRR • All plans
             </div>
@@ -151,12 +176,12 @@ const SuperAdminDashboard = () => {
           <div className="metric-header">
             <div className="metric-icon">📊</div>
             <div className="metric-trend positive">
-              +{calculateGrowth(platformStats.activeRFQs, platformStats.previousRFQs)}%
+              +{calculateGrowth(stats.activeRFQs, stats.previousRFQs)}%
             </div>
           </div>
           <div className="metric-content">
             <h3>Active RFQs</h3>
-            <div className="metric-value">{formatNumber(platformStats.activeRFQs || 0)}</div>
+            <div className="metric-value">{formatNumber(stats.activeRFQs)}</div>
             <div className="metric-description">
               Live requests for quotation
             </div>
@@ -178,17 +203,7 @@ const SuperAdminDashboard = () => {
               <div className="action-content">
                 <h3>Organizations</h3>
                 <p>Manage all buyer and supplier accounts</p>
-                <span className="action-badge">{platformStats.totalOrganizations || 0} total</span>
-              </div>
-              <div className="action-arrow">→</div>
-            </Link>
-
-            <Link to="/super-admin/users" className="action-card" aria-label="Manage users">
-              <div className="action-icon">👥</div>
-              <div className="action-content">
-                <h3>User Management</h3>
-                <p>View and manage all user accounts</p>
-                <span className="action-badge">{platformStats.totalUsers || 0} users</span>
+                <span className="action-badge">{stats.totalOrganizations || 0} total</span>
               </div>
               <div className="action-arrow">→</div>
             </Link>
@@ -208,27 +223,17 @@ const SuperAdminDashboard = () => {
               <div className="action-content">
                 <h3>Billing & Revenue</h3>
                 <p>Subscription management and revenue tracking</p>
-                <span className="action-badge">{formatCurrency(platformStats.monthlyRevenue || 0)} MRR</span>
+                <span className="action-badge">{formatCurrency(stats.monthlyRevenue)} MRR</span>
               </div>
               <div className="action-arrow">→</div>
             </Link>
 
-            <Link to="/super-admin/system-settings" className="action-card" aria-label="System settings">
+            <Link to="/super-admin/settings" className="action-card" aria-label="System settings">
               <div className="action-icon">⚙️</div>
               <div className="action-content">
                 <h3>System Configuration</h3>
                 <p>Platform settings and preferences</p>
                 <span className="action-badge">Configuration</span>
-              </div>
-              <div className="action-arrow">→</div>
-            </Link>
-
-            <Link to="/super-admin/audit-logs" className="action-card" aria-label="View audit logs">
-              <div className="action-icon">📋</div>
-              <div className="action-content">
-                <h3>Audit Logs</h3>
-                <p>Security and activity monitoring</p>
-                <span className="action-badge">Security</span>
               </div>
               <div className="action-arrow">→</div>
             </Link>
@@ -246,8 +251,8 @@ const SuperAdminDashboard = () => {
               </Link>
             </div>
             <div className="activity-list">
-              {analytics.recentActivity?.length > 0 ? (
-                analytics.recentActivity.slice(0, 6).map((activity, index) => (
+              {recentActivity.length > 0 ? (
+                recentActivity.slice(0, 6).map((activity, index) => (
                   <div key={activity.id || index} className="activity-item">
                     <div className={`activity-icon ${activity.type}`}>
                       {getActivityIcon(activity.action)}
@@ -273,8 +278,8 @@ const SuperAdminDashboard = () => {
           <div className="status-card">
             <div className="section-header">
               <h3>System Status</h3>
-              <div className={`status-indicator ${platformStats.systemStatus || 'healthy'}`}>
-                {platformStats.systemStatus === 'healthy' ? '✓' : '⚠'}
+              <div className={`status-indicator ${stats.systemStatus || 'healthy'}`}>
+                {stats.systemStatus === 'healthy' ? '✓' : '⚠'}
               </div>
             </div>
             <div className="status-list">
@@ -292,36 +297,8 @@ const SuperAdminDashboard = () => {
               </div>
               <div className="status-item">
                 <span className="status-label">Uptime</span>
-                <span className="status-value">{platformStats.uptime || '99.9%'}</span>
+                <span className="status-value">{stats.uptime || '99.9%'}</span>
               </div>
-            </div>
-          </div>
-
-          {/* Subscription Distribution */}
-          <div className="distribution-card">
-            <div className="section-header">
-              <h3>Subscription Plans</h3>
-            </div>
-            <div className="distribution-list">
-              {platformStats.subscriptionDistribution?.map((plan, index) => (
-                <div key={plan.name || index} className="distribution-item">
-                  <div className="distribution-info">
-                    <span className="plan-name">{plan.name}</span>
-                    <span className="plan-count">{plan.count} orgs</span>
-                  </div>
-                  <div className="distribution-bar">
-                    <div 
-                      className={`distribution-fill ${plan.name.toLowerCase()}`}
-                      style={{ width: `${plan.percentage}%` }}
-                    ></div>
-                  </div>
-                  <span className="plan-percentage">{plan.percentage}%</span>
-                </div>
-              )) || (
-                <div className="empty-distribution">
-                  <p>No subscription data available</p>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -338,15 +315,11 @@ const SuperAdminDashboard = () => {
             <div className="chart-card">
               <h4>User Growth</h4>
               <div className="chart-container">
-                {analytics.userGrowth ? (
-                  <UserGrowthChart data={analytics.userGrowth} />
-                ) : (
-                  <div className="chart-placeholder">
-                    <div className="placeholder-icon">📈</div>
-                    <p>User growth chart</p>
-                    <small>Data visualization would appear here</small>
-                  </div>
-                )}
+                <div className="chart-placeholder">
+                  <div className="placeholder-icon">📈</div>
+                  <p>User growth chart</p>
+                  <small>Data visualization would appear here</small>
+                </div>
               </div>
             </div>
             <div className="chart-card">
@@ -365,24 +338,6 @@ const SuperAdminDashboard = () => {
     </div>
   );
 };
-
-// Helper components
-const UserGrowthChart = ({ data }) => (
-  <div className="simple-chart">
-    <div className="chart-bars">
-      {data.map((item, index) => (
-        <div key={index} className="chart-bar-container">
-          <div 
-            className="chart-bar"
-            style={{ height: `${(item.value / Math.max(...data.map(d => d.value))) * 100}%` }}
-            title={`${item.label}: ${item.value} users`}
-          ></div>
-          <span className="chart-label">{item.label}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 // Helper functions
 const getActivityIcon = (action) => {

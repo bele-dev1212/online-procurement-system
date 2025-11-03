@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './LoginForm.css';
 
 const LoginForm = ({
-  onLogin,
   isLoading = false,
   error = null,
   showForgotPassword = true,
@@ -14,6 +14,8 @@ const LoginForm = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -24,18 +26,8 @@ const LoginForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
 
-  // Get redirect path from location state or default to dashboard
+  // Get redirect path from location state or default to appropriate dashboard
   const from = location.state?.from?.pathname || '/dashboard';
-
-  // Demo accounts for testing
-  const defaultDemoAccounts = [
-    { email: 'admin@procureflow.com', password: 'admin123', role: 'Administrator', name: 'System Admin' },
-    { email: 'manager@procureflow.com', password: 'manager123', role: 'Procurement Manager', name: 'John Manager' },
-    { email: 'supplier@procureflow.com', password: 'supplier123', role: 'Supplier', name: 'Sarah Supplier' },
-    { email: 'viewer@procureflow.com', password: 'viewer123', role: 'Viewer', name: 'David Viewer' }
-  ];
-
-  const demoAccountsToUse = demoAccounts.length > 0 ? demoAccounts : defaultDemoAccounts;
 
   useEffect(() => {
     // Check for saved credentials
@@ -58,8 +50,6 @@ const LoginForm = ({
     // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
     }
 
     setErrors(newErrors);
@@ -81,20 +71,54 @@ const LoginForm = ({
     }
   };
 
-  const handleDemoLogin = (demoAccount) => {
+  const getRedirectPath = (userRole) => {
+    // Define role-based redirect paths
+    const rolePaths = {
+      super_admin: '/super-admin/dashboard',
+      admin: '/dashboard',
+      manager: '/dashboard',
+      procurement_manager: '/dashboard',
+      supplier: '/supplier/dashboard',
+      viewer: '/dashboard',
+      user: '/dashboard'
+    };
+
+    return rolePaths[userRole] || '/dashboard';
+  };
+
+  const handleDemoLogin = async (demoAccount) => {
     setFormData({
       email: demoAccount.email,
       password: demoAccount.password,
       rememberMe: false
     });
     
-    // Auto-submit after a brief delay to show the filled form
-    setTimeout(() => {
-      handleSubmit(new Event('submit'), demoAccount);
-    }, 500);
+    try {
+      setIsSubmitting(true);
+      const credentials = {
+        email: demoAccount.email,
+        password: demoAccount.password
+      };
+
+      const result = await login(credentials);
+
+      if (result.success) {
+        const redirectPath = getRedirectPath(result.user.role);
+        
+        if (redirectAfterLogin) {
+          navigate(redirectPath, { replace: true });
+        }
+      } else {
+        setErrors({ submit: result.message || 'Demo login failed' });
+      }
+    } catch (error) {
+      setErrors({ submit: error.message || 'Demo login error' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSubmit = async (event, demoAccount = null) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     
     if (!validateForm()) {
@@ -105,74 +129,48 @@ const LoginForm = ({
     setLoginAttempts(prev => prev + 1);
 
     try {
-      const loginData = demoAccount ? {
-        email: demoAccount.email,
-        password: demoAccount.password,
-        rememberMe: false,
-        isDemo: true,
-        userInfo: demoAccount
-      } : {
-        ...formData,
-        isDemo: false
+      const credentials = {
+        email: formData.email,
+        password: formData.password
       };
 
       // Save email to localStorage if remember me is checked
-      if (formData.rememberMe && !demoAccount) {
+      if (formData.rememberMe) {
         localStorage.setItem('rememberedEmail', formData.email);
-      } else if (!formData.rememberMe) {
+      } else {
         localStorage.removeItem('rememberedEmail');
       }
 
-      // Call the onLogin prop (would typically connect to your auth API)
-      const result = await (onLogin ? onLogin(loginData) : mockLogin(loginData));
+      // Call the auth context login which should connect to your backend
+      const result = await login(credentials);
 
       if (result.success) {
+        const redirectPath = getRedirectPath(result.user.role);
+        
         // Reset form
         setFormData({
-          email: '',
+          email: formData.rememberMe ? formData.email : '',
           password: '',
-          rememberMe: false
+          rememberMe: formData.rememberMe
         });
         setErrors({});
 
         // Redirect if enabled
         if (redirectAfterLogin) {
-          navigate(from, { replace: true });
+          navigate(redirectPath, { replace: true });
         }
       } else {
-        setErrors({ submit: result.message || 'Login failed. Please try again.' });
+        setErrors({ submit: result.message || 'Login failed. Please check your credentials.' });
       }
     } catch (error) {
-      setErrors({ submit: error.message || 'An unexpected error occurred' });
+      setErrors({ 
+        submit: error.response?.data?.message || 
+                error.message || 
+                'An unexpected error occurred. Please try again.' 
+      });
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  // Mock login function for demonstration
-  const mockLogin = async (loginData) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        if (loginData.email && loginData.password) {
-          resolve({
-            success: true,
-            user: {
-              id: 1,
-              email: loginData.email,
-              name: loginData.isDemo ? loginData.userInfo.name : 'User',
-              role: loginData.isDemo ? loginData.userInfo.role : 'User',
-              avatar: null
-            },
-            token: 'mock-jwt-token-here'
-          });
-        } else {
-          resolve({
-            success: false,
-            message: 'Invalid email or password'
-          });
-        }
-      }, 1500);
-    });
   };
 
   const currentSubmitting = isLoading || isSubmitting;
@@ -190,11 +188,11 @@ const LoginForm = ({
       </div>
 
       {/* Demo Accounts Section */}
-      {demoAccountsToUse.length > 0 && (
+      {demoAccounts.length > 0 && (
         <div className="demo-accounts-section">
           <h3 className="demo-section-title">Quick Demo Access</h3>
           <div className="demo-accounts-grid">
-            {demoAccountsToUse.map((account, index) => (
+            {demoAccounts.map((account, index) => (
               <button
                 key={index}
                 className="demo-account-btn"
@@ -230,6 +228,7 @@ const LoginForm = ({
               placeholder="Enter your email"
               disabled={currentSubmitting}
               autoComplete="email"
+              required
             />
             <div className="input-icon">📧</div>
           </div>
@@ -261,6 +260,7 @@ const LoginForm = ({
               placeholder="Enter your password"
               disabled={currentSubmitting}
               autoComplete="current-password"
+              required
             />
             <div className="input-icon">🔒</div>
             <button
@@ -320,16 +320,16 @@ const LoginForm = ({
           </div>
         )}
 
-        {/* Success Message (for demo) */}
+        {/* Helpful Tips */}
         {loginAttempts === 0 && !hasError && (
           <div className="login-tips">
             <div className="tip-item">
               <span className="tip-icon">💡</span>
-              Use demo accounts for quick access
+              Use your organization email and password
             </div>
             <div className="tip-item">
               <span className="tip-icon">🔐</span>
-              Passwords are case-sensitive
+              Contact admin if you forgot your credentials
             </div>
           </div>
         )}
@@ -352,11 +352,7 @@ const LoginForm = ({
         <div className="security-info">
           <div className="security-item">
             <span className="security-icon">🔒</span>
-            SSL Secured Connection
-          </div>
-          <div className="security-item">
-            <span className="security-icon">📧</span>
-            Support: support@procureflow.com
+            Secure Authentication
           </div>
         </div>
       </div>

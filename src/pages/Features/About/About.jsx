@@ -5,9 +5,31 @@ import './About.css';
 const About = () => {
   return (
     <div className="about">
+      {/* Navigation Header */}
+      <header className="about-nav-header">
+        <div className="nav-container">
+          <div className="nav-brand">
+            <Link to="/" className="brand-logo">
+              <span className="logo-icon">⚡</span>
+              ProcureEthiopia
+            </Link>
+          </div>
+          <nav className="nav-links">
+            <Link to="/features" className="nav-link">Features</Link>
+            <Link to="/pricing" className="nav-link">Pricing</Link>
+            <Link to="/about" className="nav-link active">About</Link>
+            <Link to="/contact" className="nav-link">Contact</Link>
+          </nav>
+          <div className="nav-actions">
+            <Link to="/login" className="btn btn-outline">Login</Link>
+            <Link to="/register" className="btn btn-primary">Get Started</Link>
+          </div>
+        </div>
+      </header>
+
       <div className="container">
         <div className="about-hero">
-          <h1>About ፈጣን ግዢ</h1>
+          <h1>About This Platform</h1>
           <p className="subtitle">Modern Procurement Solutions for Ethiopian Businesses</p>
         </div>
 

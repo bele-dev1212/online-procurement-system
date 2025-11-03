@@ -245,7 +245,7 @@ const RegisterForm = ({
               firstName: userData.firstName,
               lastName: userData.lastName,
               role: userData.userRole,
-              status: 'pending_verification'
+              status: 'active'
             },
             message: 'Registration successful! Please check your email.'
           });

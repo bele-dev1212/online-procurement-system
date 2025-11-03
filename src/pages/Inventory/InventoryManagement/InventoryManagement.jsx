@@ -1,13 +1,25 @@
+// src/pages/Inventory/InventoryManagement/InventoryManagement.jsx
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useInventory } from '../../../../hooks/useInventory';
-import SearchBar from '../../../../components/common/SearchBar/SearchBar';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { formatCurrency, formatNumber, formatDate } from '../../../../utils/helpers/formatters';
-import { inventoryStatus } from '../../../../utils/enums/inventoryStatus';
+import { useInventory } from '../../../hooks/useInventory';
+import SearchBar from '../../../components/common/SearchBar/SearchBar';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { CurrencyFormatters, DataFormatters, NumberFormatters } from '../../../utils/helpers/formatters';
+import { INVENTORY_STATUS } from '../../../utils/enums/inventoryStatus';
 import './InventoryManagement.css';
 
+const { formatCurrency } = CurrencyFormatters;
+const { formatDate } = DataFormatters;
+const { formatNumber } = NumberFormatters;
+/*const INVENTORY_STATUS = {
+  active: 'Active',
+  inactive: 'Inactive', 
+  discontinued: 'Discontinued',
+  coming_soon: 'Coming Soon'
+
+}; 
+*/
 const InventoryManagement = () => {
   const navigate = useNavigate();
   const { 
@@ -34,7 +46,7 @@ const InventoryManagement = () => {
   const [bulkAction, setBulkAction] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(15);
-  const [viewMode, setViewMode] = useState('table'); // 'table' or 'grid'
+  const [viewMode, setViewMode] = useState('table');
   const [lowStockThreshold, setLowStockThreshold] = useState(10);
   const [outOfStockThreshold, setOutOfStockThreshold] = useState(0);
 
@@ -193,15 +205,12 @@ const InventoryManagement = () => {
 
     switch (bulkAction) {
       case 'export':
-        // Export functionality would be implemented here
         alert(`Exporting ${selectedProducts.length} products`);
         break;
       case 'disable':
-        // Bulk disable would be implemented here
         alert(`Disabling ${selectedProducts.length} products`);
         break;
       case 'delete':
-        // Bulk delete would be implemented here
         alert(`Deleting ${selectedProducts.length} products`);
         break;
       default:
@@ -677,7 +686,7 @@ const InventoryManagement = () => {
             className="filter-select"
           >
             <option value="all">All Status</option>
-            {Object.entries(inventoryStatus).map(([key, value]) => (
+            {Object.entries(INVENTORY_STATUS).map(([key, value]) => (
               <option key={key} value={key}>{value}</option>
             ))}
           </select>

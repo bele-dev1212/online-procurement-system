@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export const useOrganizationRegister = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     organization: {
       name: '',
@@ -81,6 +79,8 @@ export const useOrganizationRegister = () => {
   };
 
   const submitRegistration = async () => {
+    console.log('Starting registration...');
+    
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -91,6 +91,8 @@ export const useOrganizationRegister = () => {
     setError('');
 
     try {
+      console.log('Sending registration data:', formData);
+      
       const response = await fetch('/api/organizations/register', {
         method: 'POST',
         headers: {
@@ -99,16 +101,21 @@ export const useOrganizationRegister = () => {
         body: JSON.stringify(formData),
       });
 
+      console.log('Registration response status:', response.status);
+      
       const result = await response.json();
+      console.log('Registration result:', result);
 
       if (!response.ok) {
         throw new Error(result.message || 'Registration failed');
       }
 
       // Registration successful
+      console.log('Registration successful!');
       return true;
 
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.message || 'Registration failed. Please try again.');
       return false;
     } finally {

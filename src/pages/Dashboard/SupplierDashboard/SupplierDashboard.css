@@ -1,0 +1,29 @@
+// src/pages/Dashboard/SupplierUserDashboard/SupplierUserDashboard.jsx
+import React from 'react';
+
+const SupplierUserDashboard = () => {
+  return (
+    <div className="supplier-user-dashboard">
+      <h1>Supplier User Dashboard</h1>
+      <p>Welcome to your Supplier Portal</p>
+      <div className="dashboard-content">
+        <div className="stats-grid">
+          <div className="stat-card">
+            <h3>My Bids</h3>
+            <p className="stat-number">0</p>
+          </div>
+          <div className="stat-card">
+            <h3>Active RFQs</h3>
+            <p className="stat-number">0</p>
+          </div>
+          <div className="stat-card">
+            <h3>Orders</h3>
+            <p className="stat-number">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SupplierUserDashboard;

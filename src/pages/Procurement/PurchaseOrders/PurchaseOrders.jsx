@@ -1,13 +1,27 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { usePurchaseOrders } from '../../../../hooks/usePurchaseOrders';
-import SearchBar from '../../../../components/common/SearchBar/SearchBar';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { formatCurrency, formatDate } from '../../../../utils/helpers/formatters';
-import { purchaseOrderStatus } from '../../../../utils/enums/purchaseOrderStatus';
-import './PurchaseOrders.css';
+import { usePurchaseOrders } from '../../../hooks/usePurchaseOrders';
+import SearchBar from '../../../components/common/SearchBar/SearchBar';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { CurrencyFormatters, DataFormatters } from '../../../utils/helpers/formatters';
 
+
+import './PurchaseOrders.css';
+const { formatCurrency } = CurrencyFormatters;
+const { formatDate } = DataFormatters;
+
+// Local enum
+const PURCHASE_ORDER_STATUS = {
+  draft: 'Draft',
+  pending: 'Pending Approval',
+  approved: 'Approved',
+  ordered: 'Ordered',
+  shipped: 'Shipped',
+  delivered: 'Delivered',
+  cancelled: 'Cancelled',
+  rejected: 'Rejected'
+};
 const PurchaseOrders = () => {
   const { 
     purchaseOrders, 
@@ -86,14 +100,14 @@ const PurchaseOrders = () => {
       case 'today':
         return date.toDateString() === now.toDateString();
       case 'week':
-        { const weekAgo = new Date(startOfDay - 7 * 24 * 60 * 60 * 1000);
-        return date >= weekAgo; }
+        const weekAgo = new Date(startOfDay - 7 * 24 * 60 * 60 * 1000);
+        return date >= weekAgo;
       case 'month':
-        { const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        return date >= monthAgo; }
+        const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+        return date >= monthAgo;
       case 'quarter':
-        { const quarterAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-        return date >= quarterAgo; }
+        const quarterAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+        return date >= quarterAgo;
       default:
         return true;
     }

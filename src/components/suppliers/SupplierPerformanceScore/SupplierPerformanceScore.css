@@ -1,0 +1,56 @@
+.performance-score {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-value {
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 20px;
+}
+
+.score-bar {
+  width: 60px;
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.performance-score.excellent .score-value {
+  color: #10b981;
+}
+
+.performance-score.excellent .score-fill {
+  background-color: #10b981;
+}
+
+.performance-score.good .score-value {
+  color: #f59e0b;
+}
+
+.performance-score.good .score-fill {
+  background-color: #f59e0b;
+}
+
+.performance-score.fair .score-value {
+  color: #f97316;
+}
+
+.performance-score.fair .score-fill {
+  background-color: #f97316;
+}
+
+.performance-score.poor .score-value {
+  color: #ef4444;
+}
+
+.performance-score.poor .score-fill {
+  background-color: #ef4444;
+}

@@ -25,6 +25,15 @@ const PublicRoute = ({
   const redirectParam = searchParams.get('redirect');
   const redirectPath = redirectParam || redirectTo;
 
+  // Debug logging
+  console.log('PublicRoute Debug:', {
+    pathname: location.pathname,
+    isAuthenticated,
+    isLoading,
+    restricted,
+    user: user ? `${user.email} (${user.role})` : 'No user'
+  });
+
   // Show loading spinner while checking authentication
   if (isLoading) {
     return (
@@ -35,17 +44,36 @@ const PublicRoute = ({
   }
 
   // If route is restricted and user is authenticated, redirect them
+  // BUT allow access to auth pages even when authenticated
   if (restricted && isAuthenticated && user) {
-    // Prevent redirect loop by checking if we're already on the target page
-    const isSamePath = location.pathname === redirectPath;
+    // List of auth pages that should be accessible even when authenticated
+    const authPages = [
+      '/login', 
+      '/register', 
+      '/supplier-register',
+      '/forgot-password', 
+      '/verify-email',
+      '/organization/register'
+    ];
     
-    if (!isSamePath) {
-      console.log(`Redirecting authenticated user from ${location.pathname} to ${redirectPath}`);
-      return <Navigate to={redirectPath} replace />;
+    const isAuthPage = authPages.includes(location.pathname);
+    
+    console.log('Is auth page:', isAuthPage, 'for path:', location.pathname);
+
+    // Only redirect if it's NOT an auth page
+    if (!isAuthPage) {
+      // Prevent redirect loop by checking if we're already on the target page
+      const isSamePath = location.pathname === redirectPath;
+      
+      if (!isSamePath) {
+        console.log(`Redirecting authenticated user from ${location.pathname} to ${redirectPath}`);
+        return <Navigate to={redirectPath} replace />;
+      }
     }
   }
 
   // User is not authenticated or route is not restricted, show the public page
+  console.log('Rendering public route content for:', location.pathname);
   return children;
 };
 

@@ -292,59 +292,6 @@
   font-weight: 500;
 }
 
-/* Multi-bar Chart */
-.multi-bar-chart {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.multi-bar-container {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  flex: 1;
-  position: relative;
-}
-
-.activity-bar {
-  flex: 1;
-  border-radius: 2px 2px 0 0;
-  min-height: 2px;
-  transition: height 0.3s ease;
-}
-
-.activity-bar.rfqs { background: #1976d2; }
-.activity-bar.bids { background: #2e7d32; }
-.activity-bar.users { background: #ed6c02; }
-.activity-bar.organizations { background: #7b1fa2; }
-
-.multi-bar-chart .chart-legend {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-}
-
-.legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-}
-
-.legend-color.rfqs { background: #1976d2; }
-.legend-color.bids { background: #2e7d32; }
-.legend-color.users { background: #ed6c02; }
-.legend-color.organizations { background: #7b1fa2; }
-
 /* Chart Placeholder */
 .chart-placeholder {
   text-align: center;

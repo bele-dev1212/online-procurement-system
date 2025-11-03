@@ -1,28 +1,32 @@
-import { apiClient } from './apiConfig';
+// services/api/superAdminAPI.js
+import api from './apiConfig';
 
 export const superAdminAPI = {
-  // User Management
-  getUsers: (filters = {}) => 
-    apiClient.get('/api/super-admin/users', { params: filters }),
+  // Users Management
+  getUsers: (filters = {}) => api.get('/api/super-admin/users', { params: filters }),
+  updateUserStatus: (userId, data) => api.put(`/api/super-admin/users/${userId}/status`, data),
   
-  updateUserStatus: (userId, data) => 
-    apiClient.patch(`/api/super-admin/users/${userId}/status`, data),
-
-  // Organization Management
-  getOrganizations: (filters = {}) => 
-    apiClient.get('/api/super-admin/organizations', { params: filters }),
+  // Organizations Management
+  getOrganizations: (filters = {}) => api.get('/api/super-admin/organizations', { params: filters }),
+  getOrganization: (id) => api.get(`/api/super-admin/organizations/${id}`),
+  updateOrganizationStatus: (orgId, data) => api.put(`/api/super-admin/organizations/${orgId}/status`, data),
+  deleteOrganization: (orgId) => api.delete(`/api/super-admin/organizations/${orgId}`),
   
-  updateOrganizationStatus: (orgId, data) => 
-    apiClient.patch(`/api/super-admin/organizations/${orgId}/status`, data),
-
-  // Platform Analytics
-  getPlatformStats: () => 
-    apiClient.get('/api/super-admin/analytics/platform-stats'),
-
-  // System Configuration
-  getPlatformConfig: () => 
-    apiClient.get('/api/super-admin/config'),
+  // Platform Statistics
+  getPlatformStats: () => api.get('/api/super-admin/stats'),
   
-  updatePlatformConfig: (config) => 
-    apiClient.put('/api/super-admin/config', { configs: config })
+  // Analytics
+  getUserGrowth: (timeRange) => api.get(`/api/super-admin/analytics/user-growth?range=${timeRange}`),
+  getRecentActivity: () => api.get('/api/super-admin/analytics/recent-activity'),
+  getAnalytics: (period = 'monthly') => api.get(`/api/super-admin/analytics?period=${period}`),
+  
+  // Platform Configuration
+  getPlatformConfig: () => api.get('/api/super-admin/config'),
+  updatePlatformConfig: (config) => api.put('/api/super-admin/config', config),
+  
+  // Subscriptions & Billing
+  getSubscriptions: () => api.get('/api/super-admin/subscriptions'),
+  updateSubscription: (subId, data) => api.put(`/api/super-admin/subscriptions/${subId}`, data),
 };
+
+export default superAdminAPI;

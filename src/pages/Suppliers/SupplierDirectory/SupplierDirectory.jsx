@@ -1,13 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSuppliers } from '../../../../hooks/useSuppliers';
-import SearchBar from '../../../../components/common/SearchBar/SearchBar';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { formatCurrency } from '../../../../utils/helpers/formatters';
-import { supplierStatus, supplierCategories } from '../../../../utils/enums/supplierStatus';
-import './SupplierDirectory.css';
+import { useSuppliers } from '../../../hooks/useSuppliers';
+import SearchBar from '../../../components/common/SearchBar/SearchBar';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { CurrencyFormatters } from '../../../utils/helpers/formatters';
 
+const { formatCurrency } = CurrencyFormatters;
+
+import './SupplierDirectory.css';
+/*const SUPPLIER_STATUS = {
+  active: 'Active',
+  inactive: 'Inactive',
+  pending: 'Pending',
+  suspended: 'Suspended',
+  approved: 'Approved',
+  rejected: 'Rejected'
+};*/
 const SupplierDirectory = () => {
   const navigate = useNavigate();
   const { 

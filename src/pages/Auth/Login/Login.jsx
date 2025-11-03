@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
+import { USER_ROLES } from '../../../utils/constants/userRoles';
 import './Login.css';
 
 const Login = () => {
@@ -28,9 +29,41 @@ const Login = () => {
     }
   }, []);
 
-  // Get redirect path or message from navigation state
-  const from = location.state?.from?.pathname || '/dashboard';
+  // Get redirect path from navigation state or use role-based default
+  const from = location.state?.from?.pathname;
   const message = location.state?.message;
+
+  // Get role-based dashboard path
+  const getDashboardPath = (user) => {
+    switch (user?.role) {
+      case USER_ROLES.SUPER_ADMIN:
+        return '/super-admin/dashboard';
+      case USER_ROLES.ADMIN:
+        return '/admin/dashboard';
+        /*
+      case USER_ROLES.PROCUREMENT_MANAGER:
+        return '/procurement/dashboard';
+      case USER_ROLES.INVENTORY_MANAGER:
+        return '/inventory/dashboard';
+      case USER_ROLES.SUPPLIER_MANAGER:
+        return '/supplier/dashboard';
+      case USER_ROLES.BID_MANAGER:
+        return '/bid/dashboard';
+      case USER_ROLES.FINANCE_MANAGER:
+        return '/finance/dashboard';
+      case USER_ROLES.DEPARTMENT_MANAGER:
+        return '/department/dashboard';
+      case USER_ROLES.VIEWER:
+        return '/viewer/dashboard';
+      case USER_ROLES.AUDITOR:
+        return '/auditor/dashboard';
+      case USER_ROLES.SUPPLIER_USER:
+        return '/supplier-user/dashboard';
+      case USER_ROLES.USER:*/
+      default:
+        return '/dashboard'; // Regular users
+    }
+  };
 
   // Validate form fields
   const validateForm = () => {
@@ -90,8 +123,15 @@ const Login = () => {
         } else {
           localStorage.removeItem('rememberedEmail');
         }
-        // Login successful - AuthContext has already handled token storage
-        navigate(from, { replace: true });
+        
+        // Get role-based dashboard path
+        const dashboardPath = getDashboardPath(result.user);
+        
+        // Use custom redirect or role-based dashboard
+        const redirectPath = from || dashboardPath;
+        
+        // Login successful - redirect to appropriate dashboard
+        navigate(redirectPath, { replace: true });
       } else {
         setError(result.error || result.message || 'Login failed. Please check your credentials.');
       }

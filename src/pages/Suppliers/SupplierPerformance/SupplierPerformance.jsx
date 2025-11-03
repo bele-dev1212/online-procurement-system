@@ -1,16 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSuppliers } from '../../../../hooks/useSuppliers';
-import SearchBar from '../../../../components/common/SearchBar/SearchBar';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner/LoadingSpinner';
-import Modal from '../../../../components/common/Modal/Modal';
-import { formatCurrency } from '../../../../utils/helpers/formatters';
-import { supplierCategories } from '../../../../utils/enums/supplierStatus';
+import { useSuppliers } from '../../../hooks/useSuppliers';
+import SearchBar from '../../../components/common/SearchBar/SearchBar';
+import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
+import Modal from '../../../components/common/Modal/Modal';
+import { CurrencyFormatters } from '../../../utils/helpers/formatters';
+import { SUPPLIER_STATUS_CATEGORY } from '../../../utils/enums/supplierStatus';
 import './SupplierPerformance.css';
 
 const SupplierPerformance = () => {
   const navigate = useNavigate();
   const { suppliers, loading, error, refetch } = useSuppliers();
+
+  // Use the formatCurrency from CurrencyFormatters
+  const { formatCurrency } = CurrencyFormatters;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -30,6 +33,8 @@ const SupplierPerformance = () => {
     const qualityScore = Math.floor(Math.random() * 25) + 75; // 75-100
     const responseScore = Math.floor(Math.random() * 30) + 70; // 70-100
     const costScore = Math.floor(Math.random() * 35) + 65; // 65-100
+
+    // ... rest of your component code
 
     return {
       overallScore: baseScore,
@@ -541,8 +546,8 @@ const SupplierPerformance = () => {
             className="filter-select"
           >
             <option value="all">All Categories</option>
-            {supplierCategories.map(category => (
-              <option key={category} value={category}>{category}</option>
+            {Object.entries(SUPPLIER_STATUS_CATEGORY).map(([key, value]) => (
+              <option key={key} value={key}>{value}</option>
             ))}
           </select>
 

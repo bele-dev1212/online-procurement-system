@@ -52,9 +52,7 @@ const Home = () => {
                 Start Free Trial
                 <span>14 days • No credit card</span>
               </Link>
-              <Link to="/contact" className="btn-hero-secondary">
-                Watch Demo
-              </Link>
+              
             </div>
 
             <div className="hero-stats">
@@ -72,27 +70,13 @@ const Home = () => {
               </div>
             </div>
           </div>
-          
-          <div className="hero-visual">
-            <div className="dashboard-preview">
-              <div className="preview-header">
-                <div className="preview-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-              <div className="preview-content">
-                <div className="preview-card"></div>
-                <div className="preview-card"></div>
-                <div className="preview-card"></div>
-                <div className="preview-chart"></div>
-              </div>
-            </div>
+          <div className='hero-images'>
+          <img src="https://media.istockphoto.com/id/2183482739/photo/procurement-management-and-supply-chain-concept-procurement-icons-related-to-logistics-supply.jpg?s=1024x1024&w=is&k=20&c=LMdOmFJEmEbmq_V77WpGg-gY7CLI-DS0nv-iJHCYPXk=" alt="" />
+          <img src="https://kissflow.com/hubfs/manual_procurement_risks_blog.jpg" alt="Problem Solution" />
           </div>
         </div>
       </section>
-
+ 
       {/* Trusted By Section */}
       <section className="trusted-by">
         <div className="container">
@@ -170,6 +154,14 @@ const Home = () => {
           </div>
         </div>
       </section>
+      {/* supplier regitsration */}
+      <section className="supplier-cta">
+        <h2>Are you a Supplier?</h2>
+        <p>Join our platform and connect with businesses</p>
+        <Link to="/supplier-register" className="cta-button">
+         Register as supplier
+        </Link>
+      </section>
 
       {/* Footer */}
       <footer className="footer">
@@ -206,7 +198,7 @@ const Home = () => {
           </div>
           
           <div className="footer-bottom">
-            <p>&copy; 2024 ፈጣን ግዢ. All rights reserved.</p>
+            <p>&copy; 2025 ፈጣን ግዢ. All rights reserved.</p>
           </div>
         </div>
       </footer>
